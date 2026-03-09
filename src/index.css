@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 180 100% 95%;
+
+    --card: 220 25% 8%;
+    --card-foreground: 180 100% 95%;
+
+    --popover: 220 25% 6%;
+    --popover-foreground: 180 100% 95%;
+
+    --primary: 180 100% 50%;
+    --primary-foreground: 220 20% 4%;
+
+    --secondary: 220 30% 15%;
+    --secondary-foreground: 180 100% 90%;
+
+    --muted: 220 20% 12%;
+    --muted-foreground: 220 15% 55%;
+
+    --accent: 280 100% 65%;
+    --accent-foreground: 180 100% 95%;
+
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 180 50% 20%;
+    --input: 220 25% 12%;
+    --ring: 180 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom AgroAi tokens */
+    --neon-cyan: 180 100% 50%;
+    --neon-green: 150 100% 50%;
+    --neon-amber: 45 100% 55%;
+    --neon-coral: 0 90% 60%;
+    --neon-purple: 280 100% 65%;
+    
+    --glow-cyan: 0 0 20px hsl(180 100% 50% / 0.5), 0 0 40px hsl(180 100% 50% / 0.3);
+    --glow-green: 0 0 20px hsl(150 100% 50% / 0.5), 0 0 40px hsl(150 100% 50% / 0.3);
+    --glow-amber: 0 0 20px hsl(45 100% 55% / 0.5), 0 0 40px hsl(45 100% 55% / 0.3);
+    --glow-coral: 0 0 20px hsl(0 90% 60% / 0.5), 0 0 40px hsl(0 90% 60% / 0.3);
+
+    --sidebar-background: 220 25% 6%;
+    --sidebar-foreground: 180 100% 90%;
+    --sidebar-primary: 180 100% 50%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 220 30% 15%;
+    --sidebar-accent-foreground: 180 100% 90%;
+    --sidebar-border: 180 50% 15%;
+    --sidebar-ring: 180 100% 50%;
+  }
+
+  .dark {
+    --background: 220 20% 4%;
+    --foreground: 180 100% 95%;
+    --card: 220 25% 8%;
+    --card-foreground: 180 100% 95%;
+    --popover: 220 25% 6%;
+    --popover-foreground: 180 100% 95%;
+    --primary: 180 100% 50%;
+    --primary-foreground: 220 20% 4%;
+    --secondary: 220 30% 15%;
+    --secondary-foreground: 180 100% 90%;
+    --muted: 220 20% 12%;
+    --muted-foreground: 220 15% 55%;
+    --accent: 280 100% 65%;
+    --accent-foreground: 180 100% 95%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 180 50% 20%;
+    --input: 220 25% 12%;
+    --ring: 180 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Rajdhani', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', sans-serif;
+  }
+}
+
+@layer components {
+  .glow-border {
+    @apply border border-primary/30;
+    box-shadow: var(--glow-cyan);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px hsl(var(--primary) / 0.8), 0 0 20px hsl(var(--primary) / 0.5);
+  }
+
+  .glow-button {
+    @apply relative overflow-hidden;
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.4), inset 0 0 15px hsl(var(--primary) / 0.1);
+  }
+
+  .glow-button:hover {
+    box-shadow: 0 0 25px hsl(var(--primary) / 0.6), inset 0 0 20px hsl(var(--primary) / 0.2);
+  }
+
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-xl border border-primary/20 rounded-xl;
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.1), inset 0 1px 0 hsl(var(--primary) / 0.1);
+  }
+
+  .status-good {
+    @apply text-neon-green;
+    text-shadow: 0 0 10px hsl(var(--neon-green) / 0.8);
+  }
+
+  .status-warning {
+    @apply text-neon-amber;
+    text-shadow: 0 0 10px hsl(var(--neon-amber) / 0.8);
+  }
+
+  .status-critical {
+    @apply text-neon-coral;
+    text-shadow: 0 0 10px hsl(var(--neon-coral) / 0.8);
+  }
+
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .geometric-bg {
+    background-image: 
+      linear-gradient(30deg, hsl(var(--primary) / 0.03) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.03) 87.5%, hsl(var(--primary) / 0.03)),
+      linear-gradient(150deg, hsl(var(--primary) / 0.03) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.03) 87.5%, hsl(var(--primary) / 0.03)),
+      linear-gradient(30deg, hsl(var(--primary) / 0.03) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.03) 87.5%, hsl(var(--primary) / 0.03)),
+      linear-gradient(150deg, hsl(var(--primary) / 0.03) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.03) 87.5%, hsl(var(--primary) / 0.03)),
+      linear-gradient(60deg, hsl(var(--accent) / 0.02) 25%, transparent 25.5%, transparent 75%, hsl(var(--accent) / 0.02) 75%, hsl(var(--accent) / 0.02)),
+      linear-gradient(60deg, hsl(var(--accent) / 0.02) 25%, transparent 25.5%, transparent 75%, hsl(var(--accent) / 0.02) 75%, hsl(var(--accent) / 0.02));
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.7);
+  }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}

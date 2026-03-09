@@ -1,0 +1,198 @@
+{
+  "nav": {
+    "dashboard": "Boshqaruv paneli",
+    "assistant": "Yordamchi",
+    "profile": "Profil",
+    "login": "Kirish",
+    "logout": "Chiqish",
+    "getStarted": "Boshlash",
+    "welcome": "Xush kelibsiz"
+  },
+  "landing": {
+    "badge": "Sun'iy intellekt bilan avtomatlashtirish",
+    "title": "AgroAi",
+    "subtitle": "Aqlli Issiqxona Avtomatlashtirish",
+    "description": "Real vaqtda monitoring. Avtonom boshqaruv.",
+    "highlight": "Aqlli qishloq xo'jaligi — bu oson.",
+    "features": {
+      "title": "Kuchli",
+      "titleHighlight": "Imkoniyatlar",
+      "subtitle": "Issiqxonalaringizni aniqlik va intellekt bilan avtomatlashtirish uchun kerak bo'lgan hamma narsa.",
+      "analytics": {
+        "title": "Real vaqtda tahlil",
+        "description": "Barcha IoT sensorlarni oqim ma'lumotlari bilan kuzating. Harorat, namlik, tuproq namligi va CO₂ darajasi qo'l ostida."
+      },
+      "climate": {
+        "title": "AI iqlim nazorati",
+        "description": "Aqlli algoritmlar optimal o'sish sharoitlarini avtomatik ravishda saqlaydi. AgroAi murakkablikni hal qilsin."
+      },
+      "remote": {
+        "title": "Masofadan boshqarish",
+        "description": "Nasoslar, chiroqlar va ventilyatorlarni istalgan joydan boshqaring. MQTT va WebSocket orqali to'liq qurilma boshqaruvi."
+      },
+      "multi": {
+        "title": "Ko'p issiqxonalar",
+        "description": "Cheksiz issiqxonalarni bitta paneldan boshqaring. Ob'ektlar o'rtasida tez almashish."
+      }
+    }
+  },
+  "footer": {
+    "privacy": "Maxfiylik",
+    "terms": "Shartlar",
+    "documentation": "Hujjatlar",
+    "support": "Yordam",
+    "rights": "Barcha huquqlar himoyalangan."
+  },
+  "auth": {
+    "welcomeBack": "Qaytganingizdan xursandmiz",
+    "signInTo": "AgroAi hisobingizga kiring",
+    "createAccount": "Hisob yaratish",
+    "startAutomating": "Issiqxonangizni avtomatlashtirishni bugun boshlang",
+    "email": "Elektron pochta",
+    "password": "Parol",
+    "confirmPassword": "Parolni tasdiqlang",
+    "firstName": "Ism",
+    "lastName": "Familiya",
+    "forgotPassword": "Parolni unutdingizmi?",
+    "signIn": "Kirish",
+    "noAccount": "Hisobingiz yo'qmi?",
+    "signUp": "Ro'yxatdan o'tish",
+    "hasAccount": "Allaqachon hisobingiz bormi?",
+    "loginSuccess": "AgroAi'ga qaytganingizdan xursandmiz!",
+    "loginError": "Kirish xatosi. Ma'lumotlarni tekshiring.",
+    "registerSuccess": "AgroAi'ga xush kelibsiz! Hisobingiz yaratildi.",
+    "registerError": "Ro'yxatdan o'tish xatosi. Qaytadan urinib ko'ring.",
+    "passwordMismatch": "Parollar mos kelmaydi"
+  },
+  "profile": {
+    "title": "Profil",
+    "settings": "Sozlamalar",
+    "subtitle": "Hisob ma'lumotlari va xavfsizlik sozlamalarini boshqaring",
+    "personalInfo": "Shaxsiy ma'lumotlar",
+    "emailCannotChange": "Emailni o'zgartirish mumkin emas",
+    "saveChanges": "O'zgarishlarni saqlash",
+    "saved": "Saqlandi!",
+    "changePassword": "Parolni o'zgartirish",
+    "currentPassword": "Joriy parol",
+    "newPassword": "Yangi parol",
+    "confirmNewPassword": "Yangi parolni tasdiqlang",
+    "updatePassword": "Parolni yangilash",
+    "profileUpdated": "Profil muvaffaqiyatli yangilandi!",
+    "passwordChanged": "Parol muvaffaqiyatli o'zgartirildi!",
+    "newPasswordMismatch": "Yangi parollar mos kelmaydi"
+  },
+  "dashboard": {
+    "title": "Sizning",
+    "titleHighlight": "Issiqxonalaringiz",
+    "subtitle": "Barcha ulangan issiqxonalarni boshqaring va kuzating",
+    "addGreenhouse": "Issiqxona qo'shish",
+    "addNew": "Yangi issiqxona qo'shish",
+    "newGreenhouse": "Yangi issiqxona",
+    "createDescription": "Monitoring uchun yangi issiqxona yarating",
+    "namePlaceholder": "Issiqxona nomi (masalan, Asosiy issiqxona)",
+    "cancel": "Bekor qilish",
+    "create": "Issiqxona yaratish",
+    "nameRequired": "Issiqxona nomini kiriting",
+    "created": "yaratildi!"
+  },
+  "greenhouse": {
+    "open": "Ochish",
+    "settings": "Sozlamalar",
+    "analytics": "Tahlil",
+    "healthy": "Sog'lom",
+    "warning": "Ogohlantirish",
+    "critical": "Kritik",
+    "aiModeActive": "AI rejimi faol",
+    "manualControl": "Qo'lda boshqaruv",
+    "notFound": "Issiqxona topilmadi",
+    "backToDashboard": "Panelga qaytish",
+    "realTimeMonitoring": "Real vaqtda monitoring va boshqaruv",
+    "liveData": "Jonli ma'lumotlar",
+    "sensors": "Sensorlar",
+    "devices": "Qurilmalar",
+    "aiControlled": "AI tomonidan boshqariladi"
+  },
+  "aiMode": {
+    "ai": "AI",
+    "manual": "Qo'lda",
+    "aiMode": "AI rejimi",
+    "manualMode": "Qo'lda rejim",
+    "aiDescription": "AgroAi barcha qurilmalarni avtomatik boshqaradi",
+    "manualDescription": "Barcha qurilmalarni to'liq nazorat qilasiz",
+    "optimizing": "AI issiqxona muhitingizni faol optimallashtirmoqda..."
+  },
+  "sensors": {
+    "soilMoisture": "Tuproq namligi",
+    "airHumidity": "Havo namligi",
+    "temperature": "Harorat",
+    "co2Level": "CO₂ darajasi",
+    "lightIntensity": "Yorug'lik intensivligi",
+    "min": "Min",
+    "max": "Maks",
+    "good": "yaxshi",
+    "warning": "ogohlantirish",
+    "critical": "kritik",
+    "chart": "Grafik"
+  },
+  "devices": {
+    "soilWaterPump": "Sug'orish pompasi",
+    "airHumidifier": "Havo namlagichi",
+    "ledGrowLight": "LED o'sish chirog'i",
+    "ventilationFan": "Ventilyatsiya ventilyatori",
+    "power": "Quvvat",
+    "brightness": "Yorqinlik",
+    "fanSpeed": "Ventilyator tezligi",
+    "active": "Faol",
+    "inactive": "Nofaol",
+    "aiControlled": "AI tomonidan boshqariladi",
+    "manualMode": "Qo'lda rejim"
+  },
+  "settings": {
+    "title": "Issiqxona",
+    "titleHighlight": "Sozlamalari",
+    "subtitle": "Chegaralar va avtomatlashtirish parametrlarini sozlang",
+    "general": "Umumiy",
+    "greenhouseName": "Issiqxona nomi",
+    "sensorThresholds": "Sensor chegaralari",
+    "saveSettings": "Sozlamalarni saqlash",
+    "settingsSaved": "Sozlamalar saqlandi!",
+    "settingsSavedMsg": "Sozlamalar muvaffaqiyatli saqlandi!"
+  },
+  "analytics": {
+    "title": "Tahlil",
+    "subtitle": "Tarixiy sensor ma'lumotlari va tendentsiyalar",
+    "current": "Joriy",
+    "range": "Diapazon",
+    "overTime": "Vaqt davomida",
+    "quickAccess": "Tez kirish",
+    "selectSensor": "Sensorni tanlang"
+  },
+  "assistant": {
+    "title": "AI",
+    "titleHighlight": "Yordamchi",
+    "subtitle": "Issiqxonangiz haqida savol bering yoki tabiiy tilda boshqaruv buyruqlarini yuboring.",
+    "chatTitle": "Operatsion chat",
+    "chatDescription": "Yordamchi issiqxona ma'lumotlarini o'qiydi va xavfsiz issiqxona hamda o'simlik amallarini bajaradi.",
+    "welcome": "Men issiqxona monitoringi, AI rejimi, qurilmalar va o'simliklar bo'yicha yordam berishga tayyorman.",
+    "placeholder": "Issiqxona holati, telemetriya trendlari yoki kerakli amal haqida yozing...",
+    "thinking": "O'ylayapman...",
+    "send": "Yuborish",
+    "you": "Siz",
+    "bot": "Yordamchi",
+    "footer": "Masalan: “greenhouse 1 ni qisqacha ayt” yoki “greenhouse 1 uchun AI rejimini yoq”.",
+    "exampleSummary": "Greenhouse 1 ni qisqacha ayt",
+    "exampleDevices": "Greenhouse 1 qurilmalarini ko'rsat",
+    "exampleAi": "Greenhouse 1 uchun AI rejimini yoq",
+    "error": "AI chat so'rovi muvaffaqiyatsiz tugadi"
+  },
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "error": "Xato",
+    "success": "Muvaffaqiyat",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "back": "Orqaga"
+  }
+}

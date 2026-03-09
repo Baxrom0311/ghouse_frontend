@@ -1,0 +1,198 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "assistant": "Assistant",
+    "profile": "Profile",
+    "login": "Login",
+    "logout": "Logout",
+    "getStarted": "Get Started",
+    "welcome": "Welcome"
+  },
+  "landing": {
+    "badge": "AI-Powered Automation",
+    "title": "AgroAi",
+    "subtitle": "Intelligent Greenhouse Automation",
+    "description": "Real-time monitoring. Autonomous control.",
+    "highlight": "Smart agriculture made simple.",
+    "features": {
+      "title": "Powerful",
+      "titleHighlight": "Features",
+      "subtitle": "Everything you need to automate your greenhouse operations with precision and intelligence.",
+      "analytics": {
+        "title": "Real-time Analytics",
+        "description": "Monitor all IoT sensors with live data streaming. Temperature, humidity, soil moisture, and CO₂ levels at your fingertips."
+      },
+      "climate": {
+        "title": "AI Climate Control",
+        "description": "Intelligent algorithms automatically maintain optimal growing conditions. Let AgroAi handle the complexity."
+      },
+      "remote": {
+        "title": "Remote Management",
+        "description": "Control pumps, lights, and fans from anywhere. Full device management via MQTT and WebSocket protocols."
+      },
+      "multi": {
+        "title": "Multi-Greenhouse",
+        "description": "Manage unlimited greenhouses from a single dashboard. Switch between facilities instantly."
+      }
+    }
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "documentation": "Documentation",
+    "support": "Support",
+    "rights": "All rights reserved."
+  },
+  "auth": {
+    "welcomeBack": "Welcome Back",
+    "signInTo": "Sign in to your AgroAi account",
+    "createAccount": "Create Account",
+    "startAutomating": "Start automating your greenhouse today",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign In",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "hasAccount": "Already have an account?",
+    "loginSuccess": "Welcome back to AgroAi!",
+    "loginError": "Login failed. Please check your credentials.",
+    "registerSuccess": "Welcome to AgroAi! Your account has been created.",
+    "registerError": "Registration failed. Please try again.",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "profile": {
+    "title": "Profile",
+    "settings": "Settings",
+    "subtitle": "Manage your account information and security settings",
+    "personalInfo": "Personal Information",
+    "emailCannotChange": "Email cannot be changed",
+    "saveChanges": "Save Changes",
+    "saved": "Saved!",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "updatePassword": "Update Password",
+    "profileUpdated": "Profile updated successfully!",
+    "passwordChanged": "Password changed successfully!",
+    "newPasswordMismatch": "New passwords do not match"
+  },
+  "dashboard": {
+    "title": "Your",
+    "titleHighlight": "Greenhouses",
+    "subtitle": "Manage and monitor all your connected greenhouses",
+    "addGreenhouse": "Add Greenhouse",
+    "addNew": "Add New Greenhouse",
+    "newGreenhouse": "New Greenhouse",
+    "createDescription": "Create a new greenhouse to start monitoring",
+    "namePlaceholder": "Greenhouse name (e.g., Main Greenhouse)",
+    "cancel": "Cancel",
+    "create": "Create Greenhouse",
+    "nameRequired": "Please enter a greenhouse name",
+    "created": "has been created!"
+  },
+  "greenhouse": {
+    "open": "Open",
+    "settings": "Settings",
+    "analytics": "Analytics",
+    "healthy": "Healthy",
+    "warning": "Warning",
+    "critical": "Critical",
+    "aiModeActive": "AI Mode Active",
+    "manualControl": "Manual Control",
+    "notFound": "Greenhouse not found",
+    "backToDashboard": "Back to Dashboard",
+    "realTimeMonitoring": "Real-time monitoring and control",
+    "liveData": "Live data",
+    "sensors": "Sensors",
+    "devices": "Devices",
+    "aiControlled": "AI Controlled"
+  },
+  "aiMode": {
+    "ai": "AI",
+    "manual": "Manual",
+    "aiMode": "AI Mode",
+    "manualMode": "Manual Mode",
+    "aiDescription": "AgroAi automatically manages all devices",
+    "manualDescription": "You have full control over all devices",
+    "optimizing": "AI is actively optimizing your greenhouse environment..."
+  },
+  "sensors": {
+    "soilMoisture": "Soil Moisture",
+    "airHumidity": "Air Humidity",
+    "temperature": "Temperature",
+    "co2Level": "CO₂ Level",
+    "lightIntensity": "Light Intensity",
+    "min": "Min",
+    "max": "Max",
+    "good": "good",
+    "warning": "warning",
+    "critical": "critical",
+    "chart": "Chart"
+  },
+  "devices": {
+    "soilWaterPump": "Soil Water Pump",
+    "airHumidifier": "Air Humidifier",
+    "ledGrowLight": "LED Grow Light",
+    "ventilationFan": "Ventilation Fan",
+    "power": "Power",
+    "brightness": "Brightness",
+    "fanSpeed": "Fan Speed",
+    "active": "Active",
+    "inactive": "Inactive",
+    "aiControlled": "AI Controlled",
+    "manualMode": "Manual Mode"
+  },
+  "settings": {
+    "title": "Greenhouse",
+    "titleHighlight": "Settings",
+    "subtitle": "Configure thresholds and automation parameters",
+    "general": "General",
+    "greenhouseName": "Greenhouse Name",
+    "sensorThresholds": "Sensor Thresholds",
+    "saveSettings": "Save Settings",
+    "settingsSaved": "Settings Saved!",
+    "settingsSavedMsg": "Settings saved successfully!"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Historical sensor data and trends",
+    "current": "Current",
+    "range": "Range",
+    "overTime": "Over Time",
+    "quickAccess": "Quick Access",
+    "selectSensor": "Select sensor"
+  },
+  "assistant": {
+    "title": "AI",
+    "titleHighlight": "Assistant",
+    "subtitle": "Ask questions about your greenhouse or send control requests in natural language.",
+    "chatTitle": "Operational Chat",
+    "chatDescription": "The assistant can read greenhouse data and trigger safe greenhouse and plant actions.",
+    "welcome": "I am ready to help with greenhouse monitoring, AI mode, devices, and plant management.",
+    "placeholder": "Ask about greenhouse status, telemetry trends, or request a safe action...",
+    "thinking": "Thinking...",
+    "send": "Send",
+    "you": "You",
+    "bot": "Assistant",
+    "footer": "Use plain language like “summarize greenhouse 1” or “turn on AI mode for greenhouse 1”.",
+    "exampleSummary": "Summarize greenhouse 1",
+    "exampleDevices": "List devices in greenhouse 1",
+    "exampleAi": "Turn on AI mode for greenhouse 1",
+    "error": "AI chat request failed"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back"
+  }
+}
