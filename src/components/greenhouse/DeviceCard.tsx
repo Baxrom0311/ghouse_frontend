@@ -23,17 +23,21 @@ const deviceNameKeys: Record<string, string> = {
 interface DeviceCardProps {
   device: DeviceData;
   aiMode: boolean;
+  pending?: boolean;
   onToggle: () => void;
 }
 
 const DeviceCard: React.FC<DeviceCardProps> = ({
   device,
   aiMode,
+  pending = false,
   onToggle,
 }) => {
   const { t } = useTranslation();
   const Icon = iconMap[device.type];
-  const isDisabled = aiMode;
+  const isDisabled = aiMode || pending;
+  const isActive = device.isOn === true;
+  const isUnknown = device.isOn === null;
   const deviceName = t(deviceNameKeys[device.type]);
 
   return (
@@ -45,16 +49,20 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
       <Card
         variant="device"
         className={`relative ${isDisabled ? "opacity-60" : ""} ${
-          device.isOn ? "border-primary/60" : ""
+          isActive ? "border-primary/60" : ""
         }`}
       >
         {/* Status Indicator */}
         <div
           className={`absolute top-4 right-4 w-3 h-3 rounded-full ${
-            device.isOn ? "bg-neon-green animate-glow-pulse" : "bg-muted"
+            isActive
+              ? "bg-neon-green animate-glow-pulse"
+              : isUnknown
+                ? "bg-neon-amber"
+                : "bg-muted"
           }`}
           style={
-            device.isOn
+            isActive
               ? { boxShadow: "0 0 10px hsl(var(--neon-green))" }
               : undefined
           }
@@ -64,26 +72,30 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
           <div className="flex items-center gap-3">
             <div
               className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                device.isOn
+                isActive
                   ? "bg-primary/20 border border-primary/40"
                   : "bg-muted border border-muted"
               }`}
               style={
-                device.isOn
+                isActive
                   ? { boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }
                   : undefined
               }
             >
               <Icon
                 className={`w-6 h-6 transition-colors ${
-                  device.isOn ? "text-primary" : "text-muted-foreground"
+                  isActive ? "text-primary" : "text-muted-foreground"
                 }`}
               />
             </div>
             <div>
               <CardTitle className="text-base">{deviceName}</CardTitle>
               <span className="text-xs text-muted-foreground">
-                {aiMode ? t("devices.aiControlled") : t("devices.manualMode")}
+                {aiMode
+                  ? t("devices.aiControlled")
+                  : pending
+                    ? `${t("devices.manualMode")}...`
+                    : t("devices.manualMode")}
               </span>
             </div>
           </div>
@@ -94,7 +106,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">{t("devices.power")}</span>
             <Switch
-              checked={device.isOn}
+              checked={isActive}
               onCheckedChange={onToggle}
               disabled={isDisabled}
               className="data-[state=checked]:bg-primary"
@@ -104,12 +116,18 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
           {/* Status Badge */}
           <div
             className={`text-center py-2 rounded-lg text-sm font-medium ${
-              device.isOn
+              isActive
                 ? "bg-neon-green/10 text-neon-green border border-neon-green/30"
-                : "bg-muted text-muted-foreground"
+                : isUnknown
+                  ? "bg-neon-amber/10 text-neon-amber border border-neon-amber/30"
+                  : "bg-muted text-muted-foreground"
             }`}
           >
-            {device.isOn ? t("devices.active") : t("devices.inactive")}
+            {isActive
+              ? t("devices.active")
+              : isUnknown
+                ? t("devices.unknown")
+                : t("devices.inactive")}
           </div>
         </CardContent>
       </Card>

@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   createContext,
   useContext,
   useEffect,
@@ -17,18 +18,18 @@ export interface SensorData {
   id: string;
   name: string;
   type: "temperature" | "humidity" | "soil_moisture" | "co2" | "light";
-  value: number;
+  value: number | null;
   unit: string;
   min: number;
   max: number;
-  status: "good" | "warning" | "critical";
+  status: "good" | "warning" | "critical" | "unknown";
 }
 
 export interface DeviceData {
   id: string;
   name: string;
   type: "soil_water_pump" | "air_water_pump" | "led" | "fan";
-  isOn: boolean;
+  isOn: boolean | null;
 }
 
 export interface GreenhouseSettings {
@@ -49,7 +50,7 @@ export interface Greenhouse {
   id: string;
   name: string;
   mqttTopicId: string | null;
-  status: "ok" | "warning" | "critical";
+  status: "ok" | "warning" | "critical" | "unknown";
   aiMode: boolean;
   sensors: SensorData[];
   devices: DeviceData[];
@@ -86,10 +87,13 @@ const defaultSettings: GreenhouseSettings = {
 };
 
 function getSensorStatus(
-  value: number,
+  value: number | null,
   min: number,
   max: number,
-): "good" | "warning" | "critical" {
+): "good" | "warning" | "critical" | "unknown" {
+  if (value === null) {
+    return "unknown";
+  }
   if (value < min * 0.8 || value > max * 1.2) {
     return "critical";
   }
@@ -108,7 +112,8 @@ function buildSensor(
   min: number,
   max: number,
 ): SensorData {
-  const numericValue = Number(value ?? 0);
+  const numericValue =
+    value === null || value === undefined ? null : Number(value);
   return {
     id,
     name,
@@ -121,11 +126,35 @@ function buildSensor(
   };
 }
 
+function hasTelemetryData(greenhouse: BackendGreenhouse): boolean {
+  return (
+    greenhouse.stats.air !== null &&
+      greenhouse.stats.air !== undefined ||
+    greenhouse.stats.light !== null &&
+      greenhouse.stats.light !== undefined ||
+    greenhouse.stats.humidity !== null &&
+      greenhouse.stats.humidity !== undefined ||
+    greenhouse.stats.temperature !== null &&
+      greenhouse.stats.temperature !== undefined ||
+    greenhouse.stats.moisture !== null &&
+      greenhouse.stats.moisture !== undefined ||
+    greenhouse.stats.soil_water_pump !== null &&
+      greenhouse.stats.soil_water_pump !== undefined ||
+    greenhouse.stats.air_water_pump !== null &&
+      greenhouse.stats.air_water_pump !== undefined ||
+    greenhouse.stats.led !== null &&
+      greenhouse.stats.led !== undefined ||
+    greenhouse.stats.fan !== null &&
+      greenhouse.stats.fan !== undefined
+  );
+}
+
 function mapGreenhouse(
   greenhouse: BackendGreenhouse,
   devices: BackendDevice[],
 ): Greenhouse {
   const deviceMap = new Map(devices.map((device) => [device.name, device]));
+  const hasTelemetry = hasTelemetryData(greenhouse);
 
   const settings: GreenhouseSettings = {
     name: greenhouse.name,
@@ -196,33 +225,51 @@ function mapGreenhouse(
       id: "soil_water_pump",
       name: "Soil Water Pump",
       type: "soil_water_pump",
-      isOn: Boolean(greenhouse.stats.soil_water_pump),
+      isOn:
+        greenhouse.stats.soil_water_pump === null ||
+        greenhouse.stats.soil_water_pump === undefined
+          ? null
+          : greenhouse.stats.soil_water_pump,
     },
     {
       id: "air_water_pump",
       name: "Air Water Pump",
       type: "air_water_pump",
-      isOn: Boolean(greenhouse.stats.air_water_pump),
+      isOn:
+        greenhouse.stats.air_water_pump === null ||
+        greenhouse.stats.air_water_pump === undefined
+          ? null
+          : greenhouse.stats.air_water_pump,
     },
     {
       id: "led",
       name: "LED Grow Light",
       type: "led",
-      isOn: Boolean(greenhouse.stats.led),
+      isOn:
+        greenhouse.stats.led === null || greenhouse.stats.led === undefined
+          ? null
+          : greenhouse.stats.led,
     },
     {
       id: "fan",
       name: "Ventilation Fan",
       type: "fan",
-      isOn: Boolean(greenhouse.stats.fan),
+      isOn:
+        greenhouse.stats.fan === null || greenhouse.stats.fan === undefined
+          ? null
+          : greenhouse.stats.fan,
     },
   ];
 
-  const status = sensors.some((sensor) => sensor.status === "critical")
-    ? "critical"
-    : sensors.some((sensor) => sensor.status === "warning")
-      ? "warning"
-      : "ok";
+  const knownSensors = sensors.filter((sensor) => sensor.status !== "unknown");
+  const status =
+    !hasTelemetry || knownSensors.length === 0
+      ? "unknown"
+      : knownSensors.some((sensor) => sensor.status === "critical")
+        ? "critical"
+        : knownSensors.some((sensor) => sensor.status === "warning")
+          ? "warning"
+          : "ok";
 
   return {
     id: String(greenhouse.id),
@@ -243,7 +290,7 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
   const [greenhouses, setGreenhouses] = useState<Greenhouse[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const refreshGreenhouses = async () => {
+  const refreshGreenhouses = useCallback(async () => {
     if (!isAuthenticated) {
       setGreenhouses([]);
       return;
@@ -265,11 +312,11 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [isAuthenticated]);
 
   useEffect(() => {
     void refreshGreenhouses();
-  }, [isAuthenticated]);
+  }, [refreshGreenhouses]);
 
   const addGreenhouse = async (name: string) => {
     await apiFetch("/greenhouses", {

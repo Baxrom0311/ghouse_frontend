@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useGreenhouse } from "@/contexts/GreenhouseContext";
@@ -15,26 +15,38 @@ const GreenhouseViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { greenhouses, toggleAiMode, toggleDevice } = useGreenhouse();
   const { t } = useTranslation();
+  const [isAiTogglePending, setIsAiTogglePending] = useState(false);
+  const [pendingDevices, setPendingDevices] = useState<Record<string, boolean>>({});
 
   const greenhouse = greenhouses.find((g) => g.id === id);
 
   const handleToggleAiMode = async () => {
-    if (!greenhouse) return;
+    if (!greenhouse || isAiTogglePending) return;
+    setIsAiTogglePending(true);
     try {
       await toggleAiMode(greenhouse.id);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("auth.loginError"));
+    } finally {
+      setIsAiTogglePending(false);
     }
   };
 
   const handleToggleDevice = async (
     deviceName: "soil_water_pump" | "air_water_pump" | "led" | "fan",
   ) => {
-    if (!greenhouse) return;
+    if (!greenhouse || pendingDevices[deviceName]) return;
+    setPendingDevices((current) => ({ ...current, [deviceName]: true }));
     try {
       await toggleDevice(greenhouse.id, deviceName);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("auth.loginError"));
+    } finally {
+      setPendingDevices((current) => {
+        const next = { ...current };
+        delete next[deviceName];
+        return next;
+      });
     }
   };
 
@@ -98,6 +110,7 @@ const GreenhouseViewPage: React.FC = () => {
           >
             <AiModeToggle
               aiMode={greenhouse.aiMode}
+              disabled={isAiTogglePending}
               onToggle={handleToggleAiMode}
             />
           </motion.div>
@@ -156,6 +169,7 @@ const GreenhouseViewPage: React.FC = () => {
                   <DeviceCard
                     device={device}
                     aiMode={greenhouse.aiMode}
+                    pending={Boolean(pendingDevices[device.type])}
                     onToggle={() => handleToggleDevice(device.type)}
                   />
                 </motion.div>

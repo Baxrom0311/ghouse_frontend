@@ -115,7 +115,7 @@ const AnalyticsPage: React.FC = () => {
             <Card variant="glow" className="mb-6">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div><p className="text-muted-foreground text-sm">{t("analytics.current")} {sensorName}</p><p className="font-display text-4xl font-bold" style={{ color: sensorColor, textShadow: `0 0 20px ${sensorColor}50` }}>{selectedSensor.value.toFixed(1)} {selectedSensor.unit}</p></div>
+                  <div><p className="text-muted-foreground text-sm">{t("analytics.current")} {sensorName}</p><p className="font-display text-4xl font-bold" style={{ color: sensorColor, textShadow: `0 0 20px ${sensorColor}50` }}>{selectedSensor.value === null ? t("greenhouse.noData") : `${selectedSensor.value.toFixed(1)} ${selectedSensor.unit}`}</p></div>
                   <div className="text-right"><p className="text-muted-foreground text-sm">{t("analytics.range")}</p><p className="text-foreground">{selectedSensor.min} - {selectedSensor.max} {selectedSensor.unit}</p></div>
                 </div>
               </CardContent>

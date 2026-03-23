@@ -102,6 +102,7 @@
     "healthy": "Sog'lom",
     "warning": "Ogohlantirish",
     "critical": "Kritik",
+    "noData": "Ma'lumot yo'q",
     "aiModeActive": "AI rejimi faol",
     "manualControl": "Qo'lda boshqaruv",
     "notFound": "Issiqxona topilmadi",
@@ -132,6 +133,7 @@
     "good": "yaxshi",
     "warning": "ogohlantirish",
     "critical": "kritik",
+    "unknown": "noma'lum",
     "chart": "Grafik"
   },
   "devices": {
@@ -144,6 +146,7 @@
     "fanSpeed": "Ventilyator tezligi",
     "active": "Faol",
     "inactive": "Nofaol",
+    "unknown": "Noma'lum",
     "aiControlled": "AI tomonidan boshqariladi",
     "manualMode": "Qo'lda rejim"
   },

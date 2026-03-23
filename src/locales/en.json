@@ -102,6 +102,7 @@
     "healthy": "Healthy",
     "warning": "Warning",
     "critical": "Critical",
+    "noData": "No Data",
     "aiModeActive": "AI Mode Active",
     "manualControl": "Manual Control",
     "notFound": "Greenhouse not found",
@@ -132,6 +133,7 @@
     "good": "good",
     "warning": "warning",
     "critical": "critical",
+    "unknown": "unknown",
     "chart": "Chart"
   },
   "devices": {
@@ -144,6 +146,7 @@
     "fanSpeed": "Fan Speed",
     "active": "Active",
     "inactive": "Inactive",
+    "unknown": "Unknown",
     "aiControlled": "AI Controlled",
     "manualMode": "Manual Mode"
   },

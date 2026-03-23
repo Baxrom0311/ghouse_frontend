@@ -7,10 +7,15 @@ import { useTranslation } from "react-i18next";
 
 interface AiModeToggleProps {
   aiMode: boolean;
+  disabled?: boolean;
   onToggle: () => void;
 }
 
-const AiModeToggle: React.FC<AiModeToggleProps> = ({ aiMode, onToggle }) => {
+const AiModeToggle: React.FC<AiModeToggleProps> = ({
+  aiMode,
+  disabled = false,
+  onToggle,
+}) => {
   const { t } = useTranslation();
 
   return (
@@ -58,6 +63,7 @@ const AiModeToggle: React.FC<AiModeToggleProps> = ({ aiMode, onToggle }) => {
           <Switch
             checked={aiMode}
             onCheckedChange={onToggle}
+            disabled={disabled}
             className="data-[state=checked]:bg-primary scale-125"
           />
           <span className={`text-sm ${aiMode ? "text-primary glow-text" : "text-muted-foreground"}`}>

@@ -19,6 +19,7 @@ const statusColors = {
   good: "neon-green",
   warning: "neon-amber",
   critical: "neon-coral",
+  unknown: "muted-foreground",
 };
 
 const sensorNameKeys: Record<string, string> = {
@@ -40,6 +41,16 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
   const Icon = iconMap[sensor.type];
   const statusColor = statusColors[sensor.status];
   const sensorName = t(sensorNameKeys[sensor.type]);
+  const progressWidth =
+    sensor.value === null || sensor.max === sensor.min
+      ? 0
+      : Math.min(
+          100,
+          Math.max(
+            0,
+            ((sensor.value - sensor.min) / (sensor.max - sensor.min)) * 100,
+          ),
+        );
 
   return (
     <motion.div
@@ -79,7 +90,7 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
             {/* Value Display */}
             <div className="text-center py-4">
               <motion.span
-                key={sensor.value}
+                key={sensor.value ?? "unknown"}
                 initial={{ opacity: 0.5 }}
                 animate={{ opacity: 1 }}
                 className="font-display text-4xl font-bold"
@@ -88,9 +99,11 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
                   textShadow: `0 0 20px hsl(var(--${statusColor}) / 0.5)`,
                 }}
               >
-                {sensor.value.toFixed(1)}
+                {sensor.value === null ? "--" : sensor.value.toFixed(1)}
               </motion.span>
-              <span className="text-muted-foreground ml-1 text-lg">{sensor.unit}</span>
+              {sensor.value !== null && (
+                <span className="text-muted-foreground ml-1 text-lg">{sensor.unit}</span>
+              )}
             </div>
 
             {/* Progress Bar */}
@@ -102,7 +115,7 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
               <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <motion.div
                   animate={{
-                    width: `${Math.min(100, Math.max(0, ((sensor.value - sensor.min) / (sensor.max - sensor.min)) * 100))}%`,
+                    width: `${progressWidth}%`,
                   }}
                   transition={{ duration: 0.5 }}
                   className="h-full rounded-full"

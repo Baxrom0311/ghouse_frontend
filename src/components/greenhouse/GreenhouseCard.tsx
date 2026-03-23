@@ -11,6 +11,7 @@ const statusColors = {
   ok: "neon-green",
   warning: "neon-amber",
   critical: "neon-coral",
+  unknown: "muted-foreground",
 };
 
 interface GreenhouseCardProps {
@@ -34,6 +35,8 @@ const GreenhouseCard: React.FC<GreenhouseCardProps> = ({ greenhouse }) => {
         return t("greenhouse.warning");
       case "critical":
         return t("greenhouse.critical");
+      case "unknown":
+        return t("greenhouse.noData");
       default:
         return greenhouse.status;
     }
@@ -87,22 +90,30 @@ const GreenhouseCard: React.FC<GreenhouseCardProps> = ({ greenhouse }) => {
           <div className="grid grid-cols-3 gap-2">
             <div className="text-center p-2 rounded-lg bg-muted/50">
               <Thermometer className="w-4 h-4 mx-auto mb-1 text-primary" />
-              <span className="text-lg font-display font-bold text-foreground">
-                {tempSensor?.value.toFixed(0)}°
-              </span>
-            </div>
-            <div className="text-center p-2 rounded-lg bg-muted/50">
-              <Wind className="w-4 h-4 mx-auto mb-1 text-primary" />
-              <span className="text-lg font-display font-bold text-foreground">
-                {humiditySensor?.value.toFixed(0)}%
-              </span>
-            </div>
-            <div className="text-center p-2 rounded-lg bg-muted/50">
-              <Droplets className="w-4 h-4 mx-auto mb-1 text-primary" />
-              <span className="text-lg font-display font-bold text-foreground">
-                {moistureSensor?.value.toFixed(0)}%
-              </span>
-            </div>
+                <span className="text-lg font-display font-bold text-foreground">
+                  {tempSensor?.value === null || tempSensor?.value === undefined
+                    ? "--"
+                    : `${tempSensor.value.toFixed(0)}°`}
+                </span>
+              </div>
+              <div className="text-center p-2 rounded-lg bg-muted/50">
+                <Wind className="w-4 h-4 mx-auto mb-1 text-primary" />
+                <span className="text-lg font-display font-bold text-foreground">
+                  {humiditySensor?.value === null ||
+                  humiditySensor?.value === undefined
+                    ? "--"
+                    : `${humiditySensor.value.toFixed(0)}%`}
+                </span>
+              </div>
+              <div className="text-center p-2 rounded-lg bg-muted/50">
+                <Droplets className="w-4 h-4 mx-auto mb-1 text-primary" />
+                <span className="text-lg font-display font-bold text-foreground">
+                  {moistureSensor?.value === null ||
+                  moistureSensor?.value === undefined
+                    ? "--"
+                    : `${moistureSensor.value.toFixed(0)}%`}
+                </span>
+              </div>
           </div>
 
           {/* AI Mode Badge */}
