@@ -1,8 +1,12 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api";
+const defaultApiBaseUrl = import.meta.env.PROD
+  ? `${window.location.origin}/api`
+  : "http://localhost:8000/api";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? defaultApiBaseUrl;
 
 export const AUTH_TOKEN_KEY = "agroai_token";
 export const USER_STORAGE_KEY = "agroai_user";
+export const AUTH_INVALIDATED_EVENT = "agroai:auth-invalidated";
 
 export interface BackendUser {
   id: number;
@@ -62,6 +66,18 @@ export function clearStoredToken() {
   localStorage.removeItem(AUTH_TOKEN_KEY);
 }
 
+export function clearStoredUser() {
+  localStorage.removeItem(USER_STORAGE_KEY);
+}
+
+export function invalidateStoredSession() {
+  clearStoredToken();
+  clearStoredUser();
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(AUTH_INVALIDATED_EVENT));
+  }
+}
+
 export async function apiFetch<T>(
   path: string,
   init: RequestInit = {},
@@ -99,6 +115,10 @@ export async function apiFetch<T>(
   }
 
   if (!response.ok) {
+    if (requiresAuth && response.status === 401) {
+      invalidateStoredSession();
+    }
+
     const detail =
       typeof data === "object" && data !== null && "detail" in data
         ? typeof data.detail === "string"

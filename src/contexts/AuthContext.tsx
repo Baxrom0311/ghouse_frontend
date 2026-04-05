@@ -7,9 +7,12 @@ import React, {
 } from "react";
 
 import {
+  AUTH_INVALIDATED_EVENT,
   apiFetch,
   BackendUser,
-  clearStoredToken,
+  clearStoredUser,
+  getStoredToken,
+  invalidateStoredSession,
   LoginResponse,
   setStoredToken,
   USER_STORAGE_KEY,
@@ -25,6 +28,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   register: (
     email: string,
@@ -55,15 +59,30 @@ function storeUser(user: User) {
   localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
 }
 
-function clearStoredUser() {
-  localStorage.removeItem(USER_STORAGE_KEY);
-}
-
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const handleAuthInvalidated = () => {
+      setUser(null);
+      setIsLoading(false);
+      clearStoredUser();
+    };
+
+    window.addEventListener(AUTH_INVALIDATED_EVENT, handleAuthInvalidated);
+
+    const token = getStoredToken();
     const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+    if (!token) {
+      clearStoredUser();
+      setUser(null);
+      setIsLoading(false);
+      return () => {
+        window.removeEventListener(AUTH_INVALIDATED_EVENT, handleAuthInvalidated);
+      };
+    }
+
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
@@ -79,10 +98,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         storeUser(mappedUser);
       })
       .catch(() => {
-        clearStoredToken();
-        clearStoredUser();
-        setUser(null);
+        invalidateStoredSession();
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
+
+    return () => {
+      window.removeEventListener(AUTH_INVALIDATED_EVENT, handleAuthInvalidated);
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -127,8 +151,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     setUser(null);
-    clearStoredToken();
-    clearStoredUser();
+    invalidateStoredSession();
   };
 
   const updateProfile = async (firstName: string, lastName: string) => {
@@ -166,6 +189,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       value={{
         user,
         isAuthenticated: !!user,
+        isLoading,
         login,
         register,
         logout,
