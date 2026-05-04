@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { toast } from "sonner";
 import { Leaf, Mail, Lock, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
       await login(email, password);
       toast.success(t("auth.loginSuccess"));
       navigate("/dashboard");
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("auth.loginError"));
     } finally {
       setIsLoading(false);

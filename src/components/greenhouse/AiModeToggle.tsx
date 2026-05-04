@@ -94,4 +94,4 @@ const AiModeToggle: React.FC<AiModeToggleProps> = ({
   );
 };
 
-export default AiModeToggle;
+export default React.memo(AiModeToggle);

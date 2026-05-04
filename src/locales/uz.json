@@ -62,7 +62,10 @@
     "loginError": "Kirish xatosi. Ma'lumotlarni tekshiring.",
     "registerSuccess": "AgroAi'ga xush kelibsiz! Hisobingiz yaratildi.",
     "registerError": "Ro'yxatdan o'tish xatosi. Qaytadan urinib ko'ring.",
-    "passwordMismatch": "Parollar mos kelmaydi"
+    "passwordMismatch": "Parollar mos kelmaydi",
+    "passwordResetTitle": "Parolni tiklash",
+    "passwordResetUnavailable": "Parolni tiklash backendda hali yoqilmagan. Demo login ishlating yoki administratordan parolni yangilashni so'rang.",
+    "backToLogin": "Kirishga qaytish"
   },
   "profile": {
     "title": "Profil",
@@ -93,6 +96,8 @@
     "cancel": "Bekor qilish",
     "create": "Issiqxona yaratish",
     "nameRequired": "Issiqxona nomini kiriting",
+    "emptyTitle": "Hali issiqxona yo'q",
+    "emptyDescription": "Birinchi issiqxonani qo'shing, keyin sensorlar, qurilmalar, o'simliklar va AI chat shu yerda boshqariladi.",
     "created": "yaratildi!"
   },
   "greenhouse": {
@@ -111,7 +116,11 @@
     "liveData": "Jonli ma'lumotlar",
     "sensors": "Sensorlar",
     "devices": "Qurilmalar",
-    "aiControlled": "AI tomonidan boshqariladi"
+    "aiControlled": "AI tomonidan boshqariladi",
+    "overview": "Umumiy",
+    "switchGreenhouse": "Issiqxonani almashtirish",
+    "aiChat": "AI chat",
+    "actionError": "Issiqxona amali bajarilmadi"
   },
   "aiMode": {
     "ai": "AI",
@@ -156,10 +165,31 @@
     "subtitle": "Chegaralar va avtomatlashtirish parametrlarini sozlang",
     "general": "Umumiy",
     "greenhouseName": "Issiqxona nomi",
+    "mqttTopic": "MQTT topic",
+    "autoTopic": "Avtomatik",
     "sensorThresholds": "Sensor chegaralari",
+    "saveTitle": "Saqlash",
+    "saveHint": "Nom va sensor chegaralarini tekshirib, o'zgarishlarni saqlang.",
+    "nameRequired": "Issiqxona nomi bo'sh bo'lishi mumkin emas",
+    "invalidThresholds": "Har bir sensor uchun maksimal qiymat minimal qiymatdan katta bo'lishi kerak.",
     "saveSettings": "Sozlamalarni saqlash",
     "settingsSaved": "Sozlamalar saqlandi!",
-    "settingsSavedMsg": "Sozlamalar muvaffaqiyatli saqlandi!"
+    "settingsSavedMsg": "Sozlamalar muvaffaqiyatli saqlandi!",
+    "saveError": "Sozlamalarni saqlab bo'lmadi"
+  },
+  "plants": {
+    "title": "O'simliklar",
+    "count": "ta",
+    "type": "Turi",
+    "selectType": "O'simlik turini tanlang",
+    "name": "Nomi",
+    "variety": "Navi",
+    "optional": "Ixtiyoriy",
+    "add": "Qo'shish",
+    "empty": "Hali o'simlik tanlanmagan.",
+    "added": "O'simlik qo'shildi",
+    "loadError": "O'simliklarni yuklab bo'lmadi",
+    "saveError": "O'simlikni saqlab bo'lmadi"
   },
   "analytics": {
     "title": "Tahlil",
@@ -182,10 +212,18 @@
     "send": "Yuborish",
     "you": "Siz",
     "bot": "Yordamchi",
-    "footer": "Masalan: “greenhouse 1 ni qisqacha ayt” yoki “greenhouse 1 uchun AI rejimini yoq”.",
-    "exampleSummary": "Greenhouse 1 ni qisqacha ayt",
-    "exampleDevices": "Greenhouse 1 qurilmalarini ko'rsat",
-    "exampleAi": "Greenhouse 1 uchun AI rejimini yoq",
+    "footer": "Bu umumiy chat barcha issiqxonalar uchun; bitta issiqxonada aniq javob kerak bo'lsa, uning ichidagi AI chatni oching.",
+    "exampleSummary": "Barcha issiqxonalarni qisqacha ayt",
+    "exampleDevices": "Qaysi qurilmalar e'tibor talab qiladi?",
+    "exampleAi": "Issiqxonalar holatini solishtir",
+    "thisGreenhouse": "Bu issiqxona",
+    "scopedTitleHighlight": "AI chat",
+    "scopedSubtitle": "Bu issiqxona haqida id aytmasdan savol bering.",
+    "scopedWelcome": "Men {{name}} bo'yicha fokusdaman. Holat, qurilmalar, telemetriya, o'simliklar yoki xavfsiz boshqaruv amallari haqida so'rang.",
+    "scopedFooter": "Bu chat joriy issiqxonaga bog'langan; greenhouse id kiritish shart emas.",
+    "scopedExampleSummary": "Joriy holatni qisqacha ayt",
+    "scopedExampleDevices": "Qaysi qurilmalar faol?",
+    "scopedExampleAi": "AI rejimini yoq",
     "error": "AI chat so'rovi muvaffaqiyatsiz tugadi"
   },
   "common": {
@@ -196,6 +234,9 @@
     "cancel": "Bekor qilish",
     "delete": "O'chirish",
     "edit": "Tahrirlash",
-    "back": "Orqaga"
+    "back": "Orqaga",
+    "appErrorTitle": "Kutilmagan xato yuz berdi",
+    "appErrorDescription": "Interfeysda kutilmagan xato yuz berdi. Qayta yuklab davom eting.",
+    "reload": "Qayta yuklash"
   }
 }

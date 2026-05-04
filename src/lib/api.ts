@@ -2,11 +2,12 @@ const defaultApiBaseUrl = import.meta.env.PROD
   ? `${window.location.origin}/api`
   : "http://localhost:8000/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? defaultApiBaseUrl;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? defaultApiBaseUrl;
 
-export const AUTH_TOKEN_KEY = "agroai_token";
 export const USER_STORAGE_KEY = "agroai_user";
 export const AUTH_INVALIDATED_EVENT = "agroai:auth-invalidated";
+
+let accessToken: string | null = null;
 
 export interface BackendUser {
   id: number;
@@ -50,20 +51,26 @@ export interface BackendDevice {
 
 export interface LoginResponse {
   access_token: string;
+  refresh_token: string;
   token_type: string;
   user: BackendUser;
 }
 
 export function getStoredToken(): string | null {
-  return localStorage.getItem(AUTH_TOKEN_KEY);
+  return accessToken;
+}
+
+export function getWebSocketUrl(path: string): string {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_BASE_URL.replace(/^http/, "ws")}${normalizedPath}`;
 }
 
 export function setStoredToken(token: string) {
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
+  accessToken = token;
 }
 
 export function clearStoredToken() {
-  localStorage.removeItem(AUTH_TOKEN_KEY);
+  accessToken = null;
 }
 
 export function clearStoredUser() {
@@ -78,10 +85,41 @@ export function invalidateStoredSession() {
   }
 }
 
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
+}
+
 export async function apiFetch<T>(
   path: string,
   init: RequestInit = {},
   requiresAuth = true,
+): Promise<T> {
+  return apiFetchInternal<T>(path, init, requiresAuth, true);
+}
+
+async function refreshAccessToken(signal?: AbortSignal | null): Promise<boolean> {
+  const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    signal,
+    body: JSON.stringify({}),
+  });
+  if (!response.ok) return false;
+
+  const data = await response.json() as {
+    access_token: string;
+    refresh_token: string;
+  };
+  setStoredToken(data.access_token);
+  return true;
+}
+
+async function apiFetchInternal<T>(
+  path: string,
+  init: RequestInit = {},
+  requiresAuth = true,
+  allowRefresh = true,
 ): Promise<T> {
   const headers = new Headers(init.headers);
   if (!headers.has("Content-Type") && init.body !== undefined) {
@@ -98,6 +136,7 @@ export async function apiFetch<T>(
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers,
+    credentials: init.credentials ?? "include",
   });
 
   if (response.status === 204) {
@@ -116,6 +155,9 @@ export async function apiFetch<T>(
 
   if (!response.ok) {
     if (requiresAuth && response.status === 401) {
+      if (allowRefresh && await refreshAccessToken(init.signal)) {
+        return apiFetchInternal<T>(path, init, requiresAuth, false);
+      }
       invalidateStoredSession();
     }
 
@@ -132,3 +174,5 @@ export async function apiFetch<T>(
 
   return data as T;
 }
+
+export { isAbortError };

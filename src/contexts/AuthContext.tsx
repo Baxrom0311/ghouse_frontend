@@ -1,6 +1,4 @@
 import React, {
-  createContext,
-  useContext,
   useEffect,
   useState,
   ReactNode,
@@ -11,40 +9,13 @@ import {
   apiFetch,
   BackendUser,
   clearStoredUser,
-  getStoredToken,
   invalidateStoredSession,
   LoginResponse,
   setStoredToken,
   USER_STORAGE_KEY,
+  isAbortError,
 } from "@/lib/api";
-
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (
-    email: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-  ) => Promise<boolean>;
-  logout: () => void;
-  updateProfile: (firstName: string, lastName: string) => Promise<void>;
-  changePassword: (
-    currentPassword: string,
-    newPassword: string,
-  ) => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext, type User } from "@/contexts/auth-context";
 
 function mapBackendUser(user: BackendUser): User {
   return {
@@ -53,6 +24,19 @@ function mapBackendUser(user: BackendUser): User {
     firstName: user.first_name,
     lastName: user.last_name ?? "",
   };
+}
+
+function isStoredUser(value: unknown): value is User {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.id === "string" &&
+    typeof candidate.email === "string" &&
+    typeof candidate.firstName === "string" &&
+    typeof candidate.lastName === "string"
+  );
 }
 
 function storeUser(user: User) {
@@ -72,39 +56,45 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     window.addEventListener(AUTH_INVALIDATED_EVENT, handleAuthInvalidated);
 
-    const token = getStoredToken();
     const storedUser = localStorage.getItem(USER_STORAGE_KEY);
-    if (!token) {
-      clearStoredUser();
-      setUser(null);
-      setIsLoading(false);
-      return () => {
-        window.removeEventListener(AUTH_INVALIDATED_EVENT, handleAuthInvalidated);
-      };
-    }
 
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser) as unknown;
+        if (isStoredUser(parsedUser)) {
+          setUser(parsedUser);
+        } else {
+          clearStoredUser();
+        }
       } catch {
         clearStoredUser();
       }
     }
 
-    void apiFetch<BackendUser>("/auth/whoami")
+    const abortController = new AbortController();
+
+    void apiFetch<BackendUser>("/auth/whoami", {
+      signal: abortController.signal,
+    })
       .then((backendUser) => {
         const mappedUser = mapBackendUser(backendUser);
         setUser(mappedUser);
         storeUser(mappedUser);
       })
-      .catch(() => {
+      .catch((error) => {
+        if (isAbortError(error)) {
+          return;
+        }
         invalidateStoredSession();
       })
       .finally(() => {
-        setIsLoading(false);
+        if (!abortController.signal.aborted) {
+          setIsLoading(false);
+        }
       });
 
     return () => {
+      abortController.abort();
       window.removeEventListener(AUTH_INVALIDATED_EVENT, handleAuthInvalidated);
     };
   }, []);
@@ -151,6 +141,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     setUser(null);
+    void apiFetch<void>("/auth/logout", { method: "POST" }, false).catch(
+      () => undefined,
+    );
     invalidateStoredSession();
   };
 
@@ -200,12 +193,4 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };

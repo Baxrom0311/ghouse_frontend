@@ -135,4 +135,4 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
   );
 };
 
-export default DeviceCard;
+export default React.memo(DeviceCard);

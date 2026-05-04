@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useGreenhouse } from "@/contexts/GreenhouseContext";
+import { useGreenhouse } from "@/contexts/useGreenhouse";
 import Navbar from "@/components/layout/Navbar";
 import GreenhouseCard from "@/components/greenhouse/GreenhouseCard";
 import { Plus, Leaf } from "lucide-react";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 
 const DashboardPage: React.FC = () => {
-  const { greenhouses, addGreenhouse, loading } = useGreenhouse();
+  const { greenhouses, addGreenhouse, loading, errorMessage } = useGreenhouse();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newGreenhouseName, setNewGreenhouseName] = useState("");
   const { t } = useTranslation();
@@ -47,7 +47,6 @@ const DashboardPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
               <h1 className="font-display text-3xl font-bold mb-2">
@@ -68,12 +67,33 @@ const DashboardPage: React.FC = () => {
             </Button>
           </div>
 
-          {/* Greenhouse Grid */}
+          {loading && (
+            <div className="mb-6 rounded-lg border border-primary/20 bg-card/40 p-6 text-sm text-muted-foreground">
+              {t("common.loading")}
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="mb-6 rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive">
+              {errorMessage}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {!loading && greenhouses.length === 0 && (
               <Card variant="glass" className="col-span-full">
-                <CardContent className="py-10 text-center text-muted-foreground">
-                  {t("dashboard.subtitle")}
+                <CardContent className="py-10 text-center">
+                  <Leaf className="mx-auto mb-4 h-10 w-10 text-primary" />
+                  <h2 className="mb-2 font-display text-xl font-semibold">
+                    {t("dashboard.emptyTitle")}
+                  </h2>
+                  <p className="mx-auto mb-5 max-w-md text-sm text-muted-foreground">
+                    {t("dashboard.emptyDescription")}
+                  </p>
+                  <Button variant="neon" onClick={() => setIsDialogOpen(true)}>
+                    <Plus className="w-5 h-5 mr-2" />
+                    {t("dashboard.addGreenhouse")}
+                  </Button>
                 </CardContent>
               </Card>
             )}
@@ -88,34 +108,31 @@ const DashboardPage: React.FC = () => {
               </motion.div>
             ))}
 
-            {/* Add New Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: greenhouses.length * 0.1 }}
-            >
+            {greenhouses.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: greenhouses.length * 0.1 }}
+              >
               <Card
-                variant="glow"
-                className="h-full min-h-[280px] flex items-center justify-center cursor-pointer hover:border-primary/60 group"
+                variant="default"
+                className="h-full min-h-[260px] flex items-center justify-center cursor-pointer hover:border-primary/40 group"
                 onClick={() => setIsDialogOpen(true)}
               >
                 <CardContent className="text-center">
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-primary/40 group-hover:border-primary/60"
-                  >
+                  <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4 border border-dashed border-primary/40 group-hover:border-primary/60">
                     <Plus className="w-8 h-8 text-primary" />
-                  </motion.div>
+                  </div>
                   <h3 className="font-display text-lg font-semibold text-muted-foreground group-hover:text-foreground">
                     {t("dashboard.addNew")}
                   </h3>
                 </CardContent>
               </Card>
-            </motion.div>
+              </motion.div>
+            )}
           </div>
         </motion.div>
 
-        {/* Add Greenhouse Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="bg-card/95 backdrop-blur-xl border-primary/30">
             <DialogHeader>

@@ -156,4 +156,4 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
   );
 };
 
-export default SensorCard;
+export default React.memo(SensorCard);

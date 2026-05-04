@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useGreenhouse } from "@/contexts/GreenhouseContext";
+import { useGreenhouse } from "@/contexts/useGreenhouse";
 import Navbar from "@/components/layout/Navbar";
 import AiModeToggle from "@/components/greenhouse/AiModeToggle";
 import SensorCard from "@/components/greenhouse/SensorCard";
 import DeviceCard from "@/components/greenhouse/DeviceCard";
+import GreenhouseSubnav from "@/components/greenhouse/GreenhouseSubnav";
+import PlantPanel from "@/components/greenhouse/PlantPanel";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Settings, LineChart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 const GreenhouseViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { greenhouses, toggleAiMode, toggleDevice } = useGreenhouse();
+  const { greenhouses, loading, toggleAiMode, toggleDevice } = useGreenhouse();
   const { t } = useTranslation();
   const [isAiTogglePending, setIsAiTogglePending] = useState(false);
   const [pendingDevices, setPendingDevices] = useState<Record<string, boolean>>({});
@@ -26,7 +27,7 @@ const GreenhouseViewPage: React.FC = () => {
     try {
       await toggleAiMode(greenhouse.id);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("auth.loginError"));
+      toast.error(error instanceof Error ? error.message : t("greenhouse.actionError"));
     } finally {
       setIsAiTogglePending(false);
     }
@@ -40,7 +41,7 @@ const GreenhouseViewPage: React.FC = () => {
     try {
       await toggleDevice(greenhouse.id, deviceName);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("auth.loginError"));
+      toast.error(error instanceof Error ? error.message : t("greenhouse.actionError"));
     } finally {
       setPendingDevices((current) => {
         const next = { ...current };
@@ -50,15 +51,31 @@ const GreenhouseViewPage: React.FC = () => {
     }
   };
 
+  if (!greenhouse && loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto px-4 pt-24 pb-12">
+          <div className="rounded-lg border border-primary/20 bg-card/40 p-6 text-sm text-muted-foreground">
+            {t("common.loading")}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (!greenhouse) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="font-display text-2xl font-bold mb-4">{t("greenhouse.notFound")}</h1>
-          <Link to="/dashboard">
-            <Button variant="neon">{t("greenhouse.backToDashboard")}</Button>
-          </Link>
-        </div>
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto flex min-h-screen items-center justify-center px-4 pt-24 pb-12">
+          <div className="text-center">
+            <h1 className="font-display text-2xl font-bold mb-4">{t("greenhouse.notFound")}</h1>
+            <Link to="/dashboard">
+              <Button variant="neon">{t("greenhouse.backToDashboard")}</Button>
+            </Link>
+          </div>
+        </main>
       </div>
     );
   }
@@ -68,40 +85,12 @@ const GreenhouseViewPage: React.FC = () => {
       <Navbar />
       <main className="container mx-auto px-4 pt-24 pb-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-            <div className="flex items-center gap-4 mb-4 md:mb-0">
-              <Link to="/dashboard">
-                <Button variant="ghost" size="icon">
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-              </Link>
-              <div>
-                <h1 className="font-display text-2xl md:text-3xl font-bold">
-                  <span className="text-foreground">{greenhouse.name}</span>
-                </h1>
-                <p className="text-muted-foreground text-sm">
-                  {t("greenhouse.realTimeMonitoring")}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Link to={`/greenhouse/${id}/analytics`}>
-                <Button variant="outline">
-                  <LineChart className="w-4 h-4 mr-2" />
-                  {t("greenhouse.analytics")}
-                </Button>
-              </Link>
-              <Link to={`/greenhouse/${id}/settings`}>
-                <Button variant="outline">
-                  <Settings className="w-4 h-4 mr-2" />
-                  {t("greenhouse.settings")}
-                </Button>
-              </Link>
-            </div>
-          </div>
+          <GreenhouseSubnav
+            greenhouseId={greenhouse.id}
+            greenhouseName={greenhouse.name}
+            subtitle={t("greenhouse.realTimeMonitoring")}
+          />
 
-          {/* AI Mode Toggle */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -115,7 +104,6 @@ const GreenhouseViewPage: React.FC = () => {
             />
           </motion.div>
 
-          {/* Sensors Section */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -143,7 +131,6 @@ const GreenhouseViewPage: React.FC = () => {
             </div>
           </motion.section>
 
-          {/* Devices Section */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -175,6 +162,15 @@ const GreenhouseViewPage: React.FC = () => {
                 </motion.div>
               ))}
             </div>
+          </motion.section>
+
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mt-10"
+          >
+            <PlantPanel greenhouseId={greenhouse.id} />
           </motion.section>
         </motion.div>
       </main>

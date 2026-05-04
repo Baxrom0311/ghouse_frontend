@@ -1,14 +1,13 @@
 import { Suspense, lazy } from "react";
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { GreenhouseProvider } from "@/contexts/GreenhouseContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
-const queryClient = new QueryClient();
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
@@ -128,6 +127,14 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/greenhouse/:id/assistant"
+          element={
+            <ProtectedRoute>
+              <AiChatPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/greenhouse/:id/settings"
           element={
             <ProtectedRoute>
@@ -150,12 +157,11 @@ const AppRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+  <ErrorBoundary>
     <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
       <AuthProvider>
         <GreenhouseProvider>
           <TooltipProvider>
-            <Toaster />
             <Sonner />
             <BrowserRouter>
               <AppRoutes />
@@ -164,7 +170,7 @@ const App = () => (
         </GreenhouseProvider>
       </AuthProvider>
     </ThemeProvider>
-  </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

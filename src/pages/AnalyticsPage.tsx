@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useGreenhouse } from "@/contexts/GreenhouseContext";
+import { useGreenhouse } from "@/contexts/useGreenhouse";
 import Navbar from "@/components/layout/Navbar";
+import GreenhouseSubnav from "@/components/greenhouse/GreenhouseSubnav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 import { useTranslation } from "react-i18next";
-import { apiFetch, BackendTelemetry } from "@/lib/api";
+import { apiFetch, BackendTelemetry, isAbortError } from "@/lib/api";
 import { toast } from "sonner";
 
 const sensorColors: Record<string, string> = { temperature: "#ff6b6b", humidity: "#00f0ff", soil_moisture: "#00ff88", co2: "#ffaa00", light: "#bb88ff" };
@@ -18,7 +19,7 @@ const sensorNameKeys: Record<string, string> = { soil_moisture: "sensors.soilMoi
 const AnalyticsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const { greenhouses } = useGreenhouse();
+  const { greenhouses, loading } = useGreenhouse();
   const { t } = useTranslation();
   const [selectedSensorId, setSelectedSensorId] = useState(
     searchParams.get("sensor") || "temperature",
@@ -42,14 +43,23 @@ const AnalyticsPage: React.FC = () => {
   useEffect(() => {
     if (!id) return;
 
+    const abortController = new AbortController();
     const hours = timeRange === "24h" ? 24 : timeRange === "7d" ? 24 * 7 : 24 * 30;
     void apiFetch<BackendTelemetry[]>(
       `/greenhouses/${id}/telemetry?hours=${hours}&limit=500`,
+      { signal: abortController.signal },
     )
       .then(setHistory)
-      .catch((error) =>
-        toast.error(error instanceof Error ? error.message : "Telemetry load failed"),
-      );
+      .catch((error) => {
+        if (isAbortError(error)) {
+          return;
+        }
+        toast.error(error instanceof Error ? error.message : "Telemetry load failed");
+      });
+
+    return () => {
+      abortController.abort();
+    };
   }, [id, timeRange]);
 
   const chartData = useMemo(() => {
@@ -80,8 +90,31 @@ const AnalyticsPage: React.FC = () => {
       .filter((point): point is { time: string; value: number } => point !== null);
   }, [history, selectedSensor]);
 
+  if (!greenhouse && loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto px-4 pt-24 pb-12">
+          <div className="rounded-lg border border-primary/20 bg-card/40 p-6 text-sm text-muted-foreground">
+            {t("common.loading")}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (!greenhouse) {
-    return <div className="min-h-screen bg-background flex items-center justify-center"><div className="text-center"><h1 className="font-display text-2xl font-bold mb-4">{t("greenhouse.notFound")}</h1><Link to="/dashboard"><Button variant="neon">{t("greenhouse.backToDashboard")}</Button></Link></div></div>;
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto flex min-h-screen items-center justify-center px-4 pt-24 pb-12">
+          <div className="text-center">
+            <h1 className="font-display text-2xl font-bold mb-4">{t("greenhouse.notFound")}</h1>
+            <Link to="/dashboard"><Button variant="neon">{t("greenhouse.backToDashboard")}</Button></Link>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   const sensorColor = selectedSensor ? sensorColors[selectedSensor.type] : "#00f0ff";
@@ -92,23 +125,23 @@ const AnalyticsPage: React.FC = () => {
       <Navbar />
       <main className="container mx-auto px-4 pt-24 pb-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <div className="flex items-center gap-4 mb-4 md:mb-0">
-              <Link to={`/greenhouse/${id}`}><Button variant="ghost" size="icon"><ArrowLeft className="w-5 h-5" /></Button></Link>
-              <div>
-                <h1 className="font-display text-2xl md:text-3xl font-bold"><span className="text-foreground">{greenhouse.name}</span> <span className="text-primary glow-text">{t("analytics.title")}</span></h1>
-                <p className="text-muted-foreground text-sm">{t("analytics.subtitle")}</p>
-              </div>
-            </div>
-            <div className="flex gap-3">
+          <GreenhouseSubnav
+            greenhouseId={greenhouse.id}
+            greenhouseName={greenhouse.name}
+            subtitle={t("analytics.subtitle")}
+          />
+
+          <div className="mb-6 flex flex-col gap-3 rounded-lg border border-primary/20 bg-card/40 p-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="grid gap-3 sm:grid-cols-[220px_auto]">
               <Select value={selectedSensorId} onValueChange={setSelectedSensorId}>
-                <SelectTrigger className="w-[180px]"><SelectValue placeholder={t("analytics.selectSensor")} /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("analytics.selectSensor")} /></SelectTrigger>
                 <SelectContent>{greenhouse.sensors.map((sensor) => <SelectItem key={sensor.id} value={sensor.id}>{t(sensorNameKeys[sensor.type])}</SelectItem>)}</SelectContent>
               </Select>
               <div className="flex rounded-lg border border-primary/30 overflow-hidden">
                 {(["24h", "7d", "30d"] as const).map((range) => <button key={range} onClick={() => setTimeRange(range)} className={`px-4 py-2 text-sm font-medium transition-colors ${timeRange === range ? "bg-primary text-primary-foreground" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>{range}</button>)}
               </div>
             </div>
+            <div className="text-sm text-muted-foreground">{sensorName}</div>
           </div>
 
           {selectedSensor && (

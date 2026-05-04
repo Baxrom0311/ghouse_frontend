@@ -1,8 +1,7 @@
 import React, {
   useCallback,
-  createContext,
-  useContext,
   useEffect,
+  useRef,
   useState,
   ReactNode,
 } from "react";
@@ -11,8 +10,12 @@ import {
   apiFetch,
   BackendDevice,
   BackendGreenhouse,
+  getStoredToken,
+  getWebSocketUrl,
+  isAbortError,
 } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
+import { GreenhouseContext } from "@/contexts/greenhouse-context";
 
 export interface SensorData {
   id: string;
@@ -57,20 +60,14 @@ export interface Greenhouse {
   settings: GreenhouseSettings;
 }
 
-interface GreenhouseContextType {
-  greenhouses: Greenhouse[];
-  loading: boolean;
-  refreshGreenhouses: () => Promise<void>;
-  addGreenhouse: (name: string) => Promise<void>;
-  updateGreenhouseSettings: (
-    id: string,
-    settings: GreenhouseSettings,
-  ) => Promise<void>;
-  toggleAiMode: (id: string) => Promise<void>;
-  toggleDevice: (greenhouseId: string, deviceName: DeviceData["type"]) => Promise<void>;
+interface BackendGreenhouseSnapshot {
+  greenhouse: BackendGreenhouse;
+  devices: BackendDevice[];
 }
 
-const GreenhouseContext = createContext<GreenhouseContextType | undefined>(undefined);
+interface BackendGreenhouseStreamMessage {
+  greenhouses: BackendGreenhouseSnapshot[];
+}
 
 const defaultSettings: GreenhouseSettings = {
   name: "",
@@ -289,34 +286,146 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
   const { isAuthenticated } = useAuth();
   const [greenhouses, setGreenhouses] = useState<Greenhouse[]>([]);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const refreshInFlightRef = useRef(false);
 
-  const refreshGreenhouses = useCallback(async () => {
+  const applySnapshots = useCallback((snapshots: BackendGreenhouseSnapshot[]) => {
+    setGreenhouses(
+      snapshots.map((snapshot) =>
+        mapGreenhouse(snapshot.greenhouse, snapshot.devices),
+      ),
+    );
+  }, []);
+
+  const refreshGreenhouses = useCallback(async (signal?: AbortSignal) => {
     if (!isAuthenticated) {
       setGreenhouses([]);
+      setErrorMessage(null);
       return;
     }
 
+    if (refreshInFlightRef.current) {
+      return;
+    }
+
+    refreshInFlightRef.current = true;
     setLoading(true);
     try {
-      const greenhouseList = await apiFetch<BackendGreenhouse[]>("/greenhouses");
+      const greenhouseList = await apiFetch<BackendGreenhouse[]>("/greenhouses", {
+        signal,
+      });
       const hydratedGreenhouses = await Promise.all(
         greenhouseList.map(async (greenhouse) => {
           const devices = await apiFetch<BackendDevice[]>(
             `/greenhouses/${greenhouse.id}/devices`,
+            { signal },
           );
           return mapGreenhouse(greenhouse, devices);
         }),
       );
 
       setGreenhouses(hydratedGreenhouses);
+      setErrorMessage(null);
+    } catch (error) {
+      if (isAbortError(error)) {
+        return;
+      }
+      const message =
+        error instanceof Error ? error.message : "Failed to refresh greenhouses";
+      setErrorMessage(message);
+      throw error;
     } finally {
-      setLoading(false);
+      refreshInFlightRef.current = false;
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
-    void refreshGreenhouses();
+    const abortController = new AbortController();
+    void refreshGreenhouses(abortController.signal).catch(() => undefined);
+    return () => {
+      abortController.abort();
+    };
   }, [refreshGreenhouses]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    const token = getStoredToken();
+    if (!token) {
+      return;
+    }
+
+    let closedByEffect = false;
+    let fallbackIntervalId: number | undefined;
+    let reconnectTimeoutId: number | undefined;
+    let socket: WebSocket | undefined;
+
+    const startFallbackPolling = () => {
+      if (fallbackIntervalId !== undefined) {
+        return;
+      }
+      fallbackIntervalId = window.setInterval(() => {
+        void refreshGreenhouses();
+      }, 5000);
+    };
+
+    const stopFallbackPolling = () => {
+      if (fallbackIntervalId === undefined) {
+        return;
+      }
+      window.clearInterval(fallbackIntervalId);
+      fallbackIntervalId = undefined;
+    };
+
+    const connect = () => {
+      socket = new WebSocket(getWebSocketUrl("/greenhouses/ws"), [
+        "agroai.auth",
+        token,
+      ]);
+
+      socket.onopen = () => {
+        stopFallbackPolling();
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data) as BackendGreenhouseStreamMessage;
+          applySnapshots(data.greenhouses);
+          setErrorMessage(null);
+        } catch {
+          void refreshGreenhouses().catch(() => undefined);
+        }
+      };
+
+      socket.onerror = () => {
+        socket?.close();
+      };
+
+      socket.onclose = () => {
+        if (closedByEffect) {
+          return;
+        }
+        startFallbackPolling();
+        reconnectTimeoutId = window.setTimeout(connect, 5000);
+      };
+    };
+
+    connect();
+
+    return () => {
+      closedByEffect = true;
+      socket?.close();
+      stopFallbackPolling();
+      if (reconnectTimeoutId !== undefined) {
+        window.clearTimeout(reconnectTimeoutId);
+      }
+    };
+  }, [applySnapshots, isAuthenticated, refreshGreenhouses]);
 
   const addGreenhouse = async (name: string) => {
     await apiFetch("/greenhouses", {
@@ -330,41 +439,24 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
     id: string,
     settings: GreenhouseSettings,
   ) => {
-    await Promise.all([
-      apiFetch(`/greenhouses/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ name: settings.name }),
-      }),
-      apiFetch(`/greenhouses/${id}/devices/temperature/settings`, {
-        method: "POST",
-        body: JSON.stringify({ min: settings.tempMin, max: settings.tempMax }),
-      }),
-      apiFetch(`/greenhouses/${id}/devices/humidity/settings`, {
-        method: "POST",
-        body: JSON.stringify({
-          min: settings.humidityMin,
-          max: settings.humidityMax,
-        }),
-      }),
-      apiFetch(`/greenhouses/${id}/devices/moisture/settings`, {
-        method: "POST",
-        body: JSON.stringify({
+    await apiFetch(`/greenhouses/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ name: settings.name }),
+    });
+
+    await apiFetch(`/greenhouses/${id}/devices/settings`, {
+      method: "POST",
+      body: JSON.stringify({
+        temperature: { min: settings.tempMin, max: settings.tempMax },
+        humidity: { min: settings.humidityMin, max: settings.humidityMax },
+        moisture: {
           min: settings.soilMoistureMin,
           max: settings.soilMoistureMax,
-        }),
+        },
+        air: { min: settings.co2Min, max: settings.co2Max },
+        light: { min: settings.lightMin, max: settings.lightMax },
       }),
-      apiFetch(`/greenhouses/${id}/devices/air/settings`, {
-        method: "POST",
-        body: JSON.stringify({ min: settings.co2Min, max: settings.co2Max }),
-      }),
-      apiFetch(`/greenhouses/${id}/devices/light/settings`, {
-        method: "POST",
-        body: JSON.stringify({
-          min: settings.lightMin,
-          max: settings.lightMax,
-        }),
-      }),
-    ]);
+    });
 
     await refreshGreenhouses();
   };
@@ -405,9 +497,10 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <GreenhouseContext.Provider
       value={{
-        greenhouses,
-        loading,
-        refreshGreenhouses,
+      greenhouses,
+      loading,
+      errorMessage,
+      refreshGreenhouses,
         addGreenhouse,
         updateGreenhouseSettings,
         toggleAiMode,
@@ -417,12 +510,4 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
       {children}
     </GreenhouseContext.Provider>
   );
-};
-
-export const useGreenhouse = () => {
-  const context = useContext(GreenhouseContext);
-  if (context === undefined) {
-    throw new Error("useGreenhouse must be used within a GreenhouseProvider");
-  }
-  return context;
 };

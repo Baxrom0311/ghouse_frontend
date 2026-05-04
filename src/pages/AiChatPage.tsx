@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { Bot, LoaderCircle, Send, Sparkles, User } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
 import Navbar from "@/components/layout/Navbar";
+import GreenhouseSubnav from "@/components/greenhouse/GreenhouseSubnav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +19,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useGreenhouse } from "@/contexts/useGreenhouse";
 import { apiFetch } from "@/lib/api";
 
 type ChatMessage = {
@@ -26,19 +29,40 @@ type ChatMessage = {
 
 const AiChatPage: React.FC = () => {
   const { t } = useTranslation();
+  const { id: greenhouseId } = useParams<{ id?: string }>();
+  const { greenhouses, loading } = useGreenhouse();
+  const greenhouse = greenhouseId
+    ? greenhouses.find((item) => item.id === greenhouseId)
+    : undefined;
+  const isScoped = Boolean(greenhouseId);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "assistant", content: t("assistant.welcome") },
+    {
+      role: "assistant",
+      content: isScoped
+        ? t("assistant.scopedWelcome", {
+            name: greenhouse?.name ?? t("assistant.thisGreenhouse"),
+          })
+        : t("assistant.welcome"),
+    },
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [sessionId, setSessionId] = useState<number | null>(null);
 
   const suggestions = useMemo(
-    () => [
-      t("assistant.exampleSummary"),
-      t("assistant.exampleDevices"),
-      t("assistant.exampleAi"),
-    ],
-    [t],
+    () =>
+      isScoped
+        ? [
+            t("assistant.scopedExampleSummary"),
+            t("assistant.scopedExampleDevices"),
+            t("assistant.scopedExampleAi"),
+          ]
+        : [
+            t("assistant.exampleSummary"),
+            t("assistant.exampleDevices"),
+            t("assistant.exampleAi"),
+          ],
+    [isScoped, t],
   );
 
   const sendMessage = async (customMessage?: string) => {
@@ -57,10 +81,20 @@ const AiChatPage: React.FC = () => {
     setSending(true);
 
     try {
-      const response = await apiFetch<{ reply: string }>("/ai/chat", {
-        method: "POST",
-        body: JSON.stringify({ message, history }),
-      });
+      const endpoint = isScoped
+        ? `/greenhouses/${greenhouseId}/ai/chat`
+        : "/ai/chat";
+      const response = await apiFetch<{ reply: string; session_id?: number }>(
+        endpoint,
+        {
+          method: "POST",
+          body: JSON.stringify({ message, history, session_id: sessionId }),
+        },
+      );
+
+      if (response.session_id) {
+        setSessionId(response.session_id);
+      }
 
       setMessages((current) => [
         ...current,
@@ -79,6 +113,19 @@ const AiChatPage: React.FC = () => {
     }
   };
 
+  if (isScoped && !greenhouse && loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto px-4 pt-24 pb-12">
+          <div className="rounded-lg border border-primary/20 bg-card/40 p-6 text-sm text-muted-foreground">
+            {t("common.loading")}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -88,18 +135,28 @@ const AiChatPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-5xl mx-auto space-y-6"
         >
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h1 className="font-display text-3xl font-bold">
-                <span className="text-foreground">{t("assistant.title")}</span>{" "}
-                <span className="text-primary glow-text">
-                  {t("assistant.titleHighlight")}
-                </span>
-              </h1>
-              <p className="text-muted-foreground mt-2">
-                {t("assistant.subtitle")}
-              </p>
-            </div>
+          <div className={isScoped ? "space-y-4" : "flex flex-col gap-4 md:flex-row md:items-end md:justify-between"}>
+            {isScoped && greenhouseId ? (
+              <div className="w-full">
+                <GreenhouseSubnav
+                  greenhouseId={greenhouseId}
+                  greenhouseName={greenhouse?.name ?? t("assistant.thisGreenhouse")}
+                  subtitle={t("assistant.scopedSubtitle")}
+                />
+              </div>
+            ) : (
+              <div className="min-w-0">
+                <h1 className="font-display text-3xl font-bold">
+                  <span className="text-foreground">{t("assistant.title")}</span>{" "}
+                  <span className="text-primary glow-text">
+                    {t("assistant.titleHighlight")}
+                  </span>
+                </h1>
+                <p className="text-muted-foreground mt-2">
+                  {t("assistant.subtitle")}
+                </p>
+              </div>
+            )}
             <div className="flex flex-wrap gap-2">
               {suggestions.map((suggestion) => (
                 <Badge
@@ -188,7 +245,9 @@ const AiChatPage: React.FC = () => {
                 />
                 <div className="flex items-center justify-between gap-4">
                   <p className="text-xs text-muted-foreground">
-                    {t("assistant.footer")}
+                    {isScoped
+                      ? t("assistant.scopedFooter")
+                      : t("assistant.footer")}
                   </p>
                   <Button
                     variant="neon"

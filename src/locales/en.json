@@ -62,7 +62,10 @@
     "loginError": "Login failed. Please check your credentials.",
     "registerSuccess": "Welcome to AgroAi! Your account has been created.",
     "registerError": "Registration failed. Please try again.",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMismatch": "Passwords do not match",
+    "passwordResetTitle": "Password Reset",
+    "passwordResetUnavailable": "Password reset is not enabled on the backend yet. Use demo login or ask an administrator to update the password.",
+    "backToLogin": "Back to Login"
   },
   "profile": {
     "title": "Profile",
@@ -93,6 +96,8 @@
     "cancel": "Cancel",
     "create": "Create Greenhouse",
     "nameRequired": "Please enter a greenhouse name",
+    "emptyTitle": "No greenhouses yet",
+    "emptyDescription": "Add your first greenhouse, then manage sensors, devices, plants, and AI chat from one place.",
     "created": "has been created!"
   },
   "greenhouse": {
@@ -111,7 +116,11 @@
     "liveData": "Live data",
     "sensors": "Sensors",
     "devices": "Devices",
-    "aiControlled": "AI Controlled"
+    "aiControlled": "AI Controlled",
+    "overview": "Overview",
+    "switchGreenhouse": "Switch greenhouse",
+    "aiChat": "AI Chat",
+    "actionError": "Greenhouse action failed"
   },
   "aiMode": {
     "ai": "AI",
@@ -156,10 +165,31 @@
     "subtitle": "Configure thresholds and automation parameters",
     "general": "General",
     "greenhouseName": "Greenhouse Name",
+    "mqttTopic": "MQTT topic",
+    "autoTopic": "Automatic",
     "sensorThresholds": "Sensor Thresholds",
+    "saveTitle": "Save",
+    "saveHint": "Review the name and sensor thresholds, then save your changes.",
+    "nameRequired": "Greenhouse name cannot be empty",
+    "invalidThresholds": "Max value must be greater than min value for every sensor.",
     "saveSettings": "Save Settings",
     "settingsSaved": "Settings Saved!",
-    "settingsSavedMsg": "Settings saved successfully!"
+    "settingsSavedMsg": "Settings saved successfully!",
+    "saveError": "Could not save settings"
+  },
+  "plants": {
+    "title": "Plants",
+    "count": "plants",
+    "type": "Type",
+    "selectType": "Select plant type",
+    "name": "Name",
+    "variety": "Variety",
+    "optional": "Optional",
+    "add": "Add",
+    "empty": "No plants selected yet.",
+    "added": "Plant added",
+    "loadError": "Could not load plants",
+    "saveError": "Could not save plant"
   },
   "analytics": {
     "title": "Analytics",
@@ -182,10 +212,18 @@
     "send": "Send",
     "you": "You",
     "bot": "Assistant",
-    "footer": "Use plain language like “summarize greenhouse 1” or “turn on AI mode for greenhouse 1”.",
-    "exampleSummary": "Summarize greenhouse 1",
-    "exampleDevices": "List devices in greenhouse 1",
-    "exampleAi": "Turn on AI mode for greenhouse 1",
+    "footer": "Use this global chat for all greenhouses, or open AI Chat inside one greenhouse for focused answers.",
+    "exampleSummary": "Summarize all greenhouses",
+    "exampleDevices": "Which devices need attention?",
+    "exampleAi": "Compare greenhouse statuses",
+    "thisGreenhouse": "This greenhouse",
+    "scopedTitleHighlight": "AI Chat",
+    "scopedSubtitle": "Ask about this greenhouse without repeating its id.",
+    "scopedWelcome": "I am focused on {{name}}. Ask about its status, devices, telemetry, plants, or safe control actions.",
+    "scopedFooter": "This chat is scoped to the current greenhouse; no greenhouse id is needed.",
+    "scopedExampleSummary": "Summarize the current status",
+    "scopedExampleDevices": "Which devices are active?",
+    "scopedExampleAi": "Turn on AI mode",
     "error": "AI chat request failed"
   },
   "common": {
@@ -196,6 +234,9 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
-    "back": "Back"
+    "back": "Back",
+    "appErrorTitle": "Something went wrong",
+    "appErrorDescription": "The interface hit an unexpected error. Reload the page to recover.",
+    "reload": "Reload"
   }
 }

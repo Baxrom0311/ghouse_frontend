@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { toast } from "sonner";
 import Navbar from "@/components/layout/Navbar";
 import { User, Mail, Lock, Save, Check } from "lucide-react";
@@ -18,7 +18,8 @@ const ProfilePage: React.FC = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ const ProfilePage: React.FC = () => {
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSaving(true);
+    setIsSavingProfile(true);
 
     try {
       await updateProfile(firstName, lastName);
@@ -38,7 +39,7 @@ const ProfilePage: React.FC = () => {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("profile.subtitle"));
     } finally {
-      setIsSaving(false);
+      setIsSavingProfile(false);
     }
   };
 
@@ -50,7 +51,7 @@ const ProfilePage: React.FC = () => {
       return;
     }
 
-    setIsSaving(true);
+    setIsSavingPassword(true);
     try {
       await changePassword(currentPassword, newPassword);
       toast.success(t("profile.passwordChanged"));
@@ -60,7 +61,7 @@ const ProfilePage: React.FC = () => {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("profile.subtitle"));
     } finally {
-      setIsSaving(false);
+      setIsSavingPassword(false);
     }
   };
 
@@ -130,8 +131,8 @@ const ProfilePage: React.FC = () => {
                     </p>
                   </div>
 
-                  <Button type="submit" variant="neon" disabled={isSaving}>
-                    {isSaving ? (
+                  <Button type="submit" variant="neon" disabled={isSavingProfile}>
+                    {isSavingProfile ? (
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -183,6 +184,9 @@ const ProfilePage: React.FC = () => {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="••••••••"
+                      minLength={8}
+                      maxLength={128}
+                      pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,128}"
                       required
                     />
                   </div>
@@ -195,11 +199,14 @@ const ProfilePage: React.FC = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="••••••••"
+                      minLength={8}
+                      maxLength={128}
+                      pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,128}"
                       required
                     />
                   </div>
 
-                  <Button type="submit" variant="outline" disabled={isSaving}>
+                  <Button type="submit" variant="outline" disabled={isSavingPassword}>
                     {t("profile.updatePassword")}
                   </Button>
                 </form>

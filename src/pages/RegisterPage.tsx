@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import { toast } from "sonner";
 import { Leaf, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -36,7 +36,7 @@ const RegisterPage: React.FC = () => {
       await register(email, password, firstName, lastName);
       toast.success(t("auth.registerSuccess"));
       navigate("/dashboard");
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("auth.registerError"));
     } finally {
       setIsLoading(false);
@@ -143,6 +143,9 @@ const RegisterPage: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10"
+                    minLength={8}
+                    maxLength={128}
+                    pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,128}"
                     required
                   />
                 </div>
@@ -159,6 +162,9 @@ const RegisterPage: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="pl-10"
+                    minLength={8}
+                    maxLength={128}
+                    pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,128}"
                     required
                   />
                 </div>
