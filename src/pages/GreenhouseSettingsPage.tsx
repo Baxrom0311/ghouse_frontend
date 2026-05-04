@@ -20,7 +20,7 @@ const GreenhouseSettingsPage: React.FC = () => {
 
   const [settings, setSettings] = useState(greenhouse?.settings || {
     name: "", tempMin: 18, tempMax: 28, humidityMin: 50, humidityMax: 70,
-    soilMoistureMin: 40, soilMoistureMax: 80, co2Min: 300, co2Max: 800, lightMin: 20, lightMax: 60,
+    soilMoistureMin: 40, soilMoistureMax: 80, co2Min: 400, co2Max: 1200, lightMin: 20, lightMax: 60,
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);

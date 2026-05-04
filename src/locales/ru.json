@@ -135,7 +135,7 @@
     "soilMoisture": "Влажность почвы",
     "airHumidity": "Влажность воздуха",
     "temperature": "Температура",
-    "co2Level": "Уровень CO₂",
+    "co2Level": "Качество воздуха",
     "lightIntensity": "Интенсивность света",
     "min": "Мин",
     "max": "Макс",

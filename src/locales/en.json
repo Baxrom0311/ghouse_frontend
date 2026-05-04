@@ -135,7 +135,7 @@
     "soilMoisture": "Soil Moisture",
     "airHumidity": "Air Humidity",
     "temperature": "Temperature",
-    "co2Level": "CO₂ Level",
+    "co2Level": "Air Quality",
     "lightIntensity": "Light Intensity",
     "min": "Min",
     "max": "Max",
