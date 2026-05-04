@@ -210,6 +210,8 @@
     "placeholder": "Ask about greenhouse status, telemetry trends, or request a safe action...",
     "thinking": "Thinking...",
     "send": "Send",
+    "confirmCommand": "I confirm",
+    "confirmCommandMessage": "i confirm",
     "you": "You",
     "bot": "Assistant",
     "footer": "Use this global chat for all greenhouses, or open AI Chat inside one greenhouse for focused answers.",

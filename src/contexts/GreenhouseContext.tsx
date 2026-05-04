@@ -69,6 +69,10 @@ interface BackendGreenhouseStreamMessage {
   greenhouses: BackendGreenhouseSnapshot[];
 }
 
+const FALLBACK_POLL_INTERVAL_MS = 2000;
+const WEBSOCKET_RECONNECT_INTERVAL_MS = 3000;
+const ACTION_REFRESH_DELAYS_MS = [1200, 3500, 7000];
+
 const defaultSettings: GreenhouseSettings = {
   name: "",
   tempMin: 18,
@@ -288,6 +292,7 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const refreshInFlightRef = useRef(false);
+  const actionRefreshTimeoutsRef = useRef<number[]>([]);
 
   const applySnapshots = useCallback((snapshots: BackendGreenhouseSnapshot[]) => {
     setGreenhouses(
@@ -342,6 +347,26 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [isAuthenticated]);
 
+  const scheduleActionRefreshes = useCallback(() => {
+    actionRefreshTimeoutsRef.current.forEach((timeoutId) => {
+      window.clearTimeout(timeoutId);
+    });
+    actionRefreshTimeoutsRef.current = ACTION_REFRESH_DELAYS_MS.map((delay) =>
+      window.setTimeout(() => {
+        void refreshGreenhouses().catch(() => undefined);
+      }, delay),
+    );
+  }, [refreshGreenhouses]);
+
+  useEffect(() => {
+    return () => {
+      actionRefreshTimeoutsRef.current.forEach((timeoutId) => {
+        window.clearTimeout(timeoutId);
+      });
+      actionRefreshTimeoutsRef.current = [];
+    };
+  }, []);
+
   useEffect(() => {
     const abortController = new AbortController();
     void refreshGreenhouses(abortController.signal).catch(() => undefined);
@@ -371,7 +396,7 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
       }
       fallbackIntervalId = window.setInterval(() => {
         void refreshGreenhouses();
-      }, 5000);
+      }, FALLBACK_POLL_INTERVAL_MS);
     };
 
     const stopFallbackPolling = () => {
@@ -411,7 +436,7 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
           return;
         }
         startFallbackPolling();
-        reconnectTimeoutId = window.setTimeout(connect, 5000);
+        reconnectTimeoutId = window.setTimeout(connect, WEBSOCKET_RECONNECT_INTERVAL_MS);
       };
     };
 
@@ -471,7 +496,12 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
     await apiFetch(`/greenhouses/${id}/ai/switch/${nextState}`, {
       method: "POST",
     });
-    await refreshGreenhouses();
+    setGreenhouses((current) =>
+      current.map((item) =>
+        item.id === id ? { ...item, aiMode: nextState === "on" } : item,
+      ),
+    );
+    scheduleActionRefreshes();
   };
 
   const toggleDevice = async (
@@ -491,7 +521,21 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
         method: "POST",
       },
     );
-    await refreshGreenhouses();
+    setGreenhouses((current) =>
+      current.map((item) =>
+        item.id === greenhouseId
+          ? {
+              ...item,
+              devices: item.devices.map((currentDevice) =>
+                currentDevice.type === deviceName
+                  ? { ...currentDevice, isOn: nextState === "on" }
+                  : currentDevice,
+              ),
+            }
+          : item,
+      ),
+    );
+    scheduleActionRefreshes();
   };
 
   return (

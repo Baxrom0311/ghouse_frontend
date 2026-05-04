@@ -210,6 +210,8 @@
     "placeholder": "Issiqxona holati, telemetriya trendlari yoki kerakli amal haqida yozing...",
     "thinking": "O'ylayapman...",
     "send": "Yuborish",
+    "confirmCommand": "Tasdiqlayman",
+    "confirmCommandMessage": "tasdiqlayman",
     "you": "Siz",
     "bot": "Yordamchi",
     "footer": "Bu umumiy chat barcha issiqxonalar uchun; bitta issiqxonada aniq javob kerak bo'lsa, uning ichidagi AI chatni oching.",

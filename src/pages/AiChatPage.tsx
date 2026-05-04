@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Bot, LoaderCircle, Send, Sparkles, User } from "lucide-react";
+import { Bot, CheckCircle2, LoaderCircle, Send, Sparkles, User } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -27,10 +27,13 @@ type ChatMessage = {
   content: string;
 };
 
+const CONFIRMATION_PROMPT_PATTERN = /(tasdiqlayman|i confirm)/i;
+const POST_CHAT_REFRESH_DELAYS_MS = [1200, 3500, 7000];
+
 const AiChatPage: React.FC = () => {
   const { t } = useTranslation();
   const { id: greenhouseId } = useParams<{ id?: string }>();
-  const { greenhouses, loading } = useGreenhouse();
+  const { greenhouses, loading, refreshGreenhouses } = useGreenhouse();
   const greenhouse = greenhouseId
     ? greenhouses.find((item) => item.id === greenhouseId)
     : undefined;
@@ -48,6 +51,16 @@ const AiChatPage: React.FC = () => {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [sessionId, setSessionId] = useState<number | null>(null);
+  const refreshTimeoutsRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    return () => {
+      refreshTimeoutsRef.current.forEach((timeoutId) => {
+        window.clearTimeout(timeoutId);
+      });
+      refreshTimeoutsRef.current = [];
+    };
+  }, []);
 
   const suggestions = useMemo(
     () =>
@@ -64,6 +77,23 @@ const AiChatPage: React.FC = () => {
           ],
     [isScoped, t],
   );
+
+  const schedulePostChatRefresh = () => {
+    refreshTimeoutsRef.current.forEach((timeoutId) => {
+      window.clearTimeout(timeoutId);
+    });
+    refreshTimeoutsRef.current = POST_CHAT_REFRESH_DELAYS_MS.map((delay) =>
+      window.setTimeout(() => {
+        void refreshGreenhouses().catch(() => undefined);
+      }, delay),
+    );
+  };
+
+  const shouldShowConfirmButton = (message: ChatMessage, index: number) =>
+    message.role === "assistant" &&
+    index === messages.length - 1 &&
+    !sending &&
+    CONFIRMATION_PROMPT_PATTERN.test(message.content);
 
   const sendMessage = async (customMessage?: string) => {
     const message = (customMessage ?? input).trim();
@@ -100,6 +130,7 @@ const AiChatPage: React.FC = () => {
         ...current,
         { role: "assistant", content: response.reply },
       ]);
+      schedulePostChatRefresh();
     } catch (error) {
       const detail =
         error instanceof Error ? error.message : t("assistant.error");
@@ -212,6 +243,21 @@ const AiChatPage: React.FC = () => {
                         <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">
                           {message.content}
                         </p>
+                        {shouldShowConfirmButton(message, index) && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            <Button
+                              size="sm"
+                              variant="neon"
+                              onClick={() =>
+                                void sendMessage(t("assistant.confirmCommandMessage"))
+                              }
+                              disabled={sending}
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                              {t("assistant.confirmCommand")}
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
