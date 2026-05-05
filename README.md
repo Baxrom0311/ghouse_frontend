@@ -31,6 +31,10 @@ Container build:
 docker build -t agroai-frontend .
 ```
 
+## PWA
+
+The production build includes a web app manifest, service worker, offline fallback, install prompt, and Android-ready icons. Android users can open `https://gh.boos.uz` in Chrome and install AgroAI from the browser prompt or Chrome menu.
+
 ## Stack
 
 - Vite

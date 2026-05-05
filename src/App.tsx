@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { useAuth } from "@/contexts/useAuth";
 import { GreenhouseProvider } from "@/contexts/GreenhouseContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -166,6 +167,7 @@ const App = () => (
             <BrowserRouter>
               <AppRoutes />
             </BrowserRouter>
+            <PwaInstallPrompt />
           </TooltipProvider>
         </GreenhouseProvider>
       </AuthProvider>

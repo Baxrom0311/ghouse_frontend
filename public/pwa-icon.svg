@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">AgroAI app icon</title>
+  <desc id="desc">Green leaf icon for the AgroAI smart greenhouse app.</desc>
+  <rect width="512" height="512" rx="112" fill="#07110b"/>
+  <circle cx="384" cy="128" r="48" fill="#facc15"/>
+  <path d="M120 346c34-92 99-146 193-162 39-7 75-5 107 6-9 79-36 139-81 178-51 44-116 53-196 27 41-71 89-119 144-144-74 14-130 46-167 95Z" fill="#22c55e"/>
+  <path d="M104 386c68-10 141-6 219 12 41 10 75 16 101 18" fill="none" stroke="#bbf7d0" stroke-width="22" stroke-linecap="round"/>
+</svg>
