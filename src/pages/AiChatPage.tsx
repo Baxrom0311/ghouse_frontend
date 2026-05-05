@@ -28,7 +28,7 @@ type ChatMessage = {
 };
 
 const CONFIRMATION_PROMPT_PATTERN = /(tasdiqlayman|i confirm)/i;
-const POST_CHAT_REFRESH_DELAYS_MS = [1200, 3500, 7000];
+const POST_CHAT_REFRESH_DELAYS_MS = [700, 1600, 3200];
 
 const AiChatPage: React.FC = () => {
   const { t } = useTranslation();

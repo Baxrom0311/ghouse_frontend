@@ -71,7 +71,7 @@ interface BackendGreenhouseStreamMessage {
 
 const FALLBACK_POLL_INTERVAL_MS = 2000;
 const WEBSOCKET_RECONNECT_INTERVAL_MS = 3000;
-const ACTION_REFRESH_DELAYS_MS = [1200, 3500, 7000];
+const ACTION_REFRESH_DELAYS_MS = [700, 1600, 3200];
 
 const defaultSettings: GreenhouseSettings = {
   name: "",
