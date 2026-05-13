@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useGreenhouse } from "@/contexts/useGreenhouse";
 import Navbar from "@/components/layout/Navbar";
@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Save, Thermometer, Droplets, Wind, Cloud, Check, Sun } from "lucide-react";
+import { Save, Thermometer, Droplets, Wind, Cloud, Check, Sun, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const GreenhouseSettingsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { greenhouses, loading, updateGreenhouseSettings } = useGreenhouse();
+  const { greenhouses, loading, updateGreenhouseSettings, deleteGreenhouse } = useGreenhouse();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const greenhouse = greenhouses.find((g) => g.id === id);
 
   const [settings, setSettings] = useState(greenhouse?.settings || {
@@ -24,6 +25,18 @@ const GreenhouseSettingsPage: React.FC = () => {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const handleDelete = async () => {
+    if (!greenhouse) return;
+    try {
+      await deleteGreenhouse(greenhouse.id);
+      toast.success(t("common.success"));
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("common.error"));
+    }
+  };
 
   useEffect(() => {
     if (greenhouse) {
@@ -164,6 +177,30 @@ const GreenhouseSettingsPage: React.FC = () => {
                   <Button variant="hero" size="lg" className="w-full" onClick={handleSave} disabled={!canSave}>
                     {saveButtonContent}
                   </Button>
+                </CardContent>
+              </Card>
+
+              <Card variant="default" className="border-destructive/30">
+                <CardHeader><CardTitle className="text-destructive">{t("common.delete")}</CardTitle></CardHeader>
+                <CardContent className="space-y-3">
+                  {!confirmDelete ? (
+                    <Button variant="destructive" size="sm" className="w-full" onClick={() => setConfirmDelete(true)}>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {t("common.delete")} {greenhouse.name}
+                    </Button>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-sm text-destructive">{t("settings.deleteConfirm") || "Haqiqatan ham o'chirmoqchimisiz? Bu amalni qaytarib bo'lmaydi."}</p>
+                      <div className="flex gap-2">
+                        <Button variant="destructive" size="sm" className="flex-1" onClick={handleDelete}>
+                          {t("common.delete")}
+                        </Button>
+                        <Button variant="ghost" size="sm" className="flex-1" onClick={() => setConfirmDelete(false)}>
+                          {t("common.cancel")}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

@@ -12,6 +12,7 @@ export interface GreenhouseContextType {
   errorMessage: string | null;
   refreshGreenhouses: () => Promise<void>;
   addGreenhouse: (name: string) => Promise<void>;
+  deleteGreenhouse: (id: string) => Promise<void>;
   updateGreenhouseSettings: (
     id: string,
     settings: GreenhouseSettings,

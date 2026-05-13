@@ -16,6 +16,7 @@ import {
 } from "@/lib/api";
 import { useAuth } from "@/contexts/useAuth";
 import { GreenhouseContext } from "@/contexts/greenhouse-context";
+import { toast } from "sonner";
 
 export interface SensorData {
   id: string;
@@ -330,6 +331,15 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
       );
 
       setGreenhouses(hydratedGreenhouses);
+      // Sensor alert notifications
+      for (const gh of hydratedGreenhouses) {
+        for (const sensor of gh.sensors) {
+          if (sensor.value === null) continue;
+          if (sensor.status === "critical") {
+            toast.error(`⚠️ ${gh.name}: ${sensor.name} = ${sensor.value}${sensor.unit} (chegaradan tashqari!)`, { id: `alert-${gh.id}-${sensor.id}` });
+          }
+        }
+      }
       setErrorMessage(null);
     } catch (error) {
       if (isAbortError(error)) {
@@ -460,6 +470,11 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
     await refreshGreenhouses();
   };
 
+  const deleteGreenhouse = async (id: string) => {
+    await apiFetch(`/greenhouses/${id}`, { method: "DELETE" });
+    await refreshGreenhouses();
+  };
+
   const updateGreenhouseSettings = async (
     id: string,
     settings: GreenhouseSettings,
@@ -546,6 +561,7 @@ export const GreenhouseProvider: React.FC<{ children: ReactNode }> = ({
       errorMessage,
       refreshGreenhouses,
         addGreenhouse,
+        deleteGreenhouse,
         updateGreenhouseSettings,
         toggleAiMode,
         toggleDevice,
