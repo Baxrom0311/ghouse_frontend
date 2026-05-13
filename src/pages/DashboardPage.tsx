@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useGreenhouse } from "@/contexts/useGreenhouse";
 import Navbar from "@/components/layout/Navbar";
 import GreenhouseCard from "@/components/greenhouse/GreenhouseCard";
-import { Plus, Leaf } from "lucide-react";
+import { Plus, Leaf, Activity, Bot, Thermometer, Droplets } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import {
@@ -22,6 +22,18 @@ const DashboardPage: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newGreenhouseName, setNewGreenhouseName] = useState("");
   const { t } = useTranslation();
+
+  const stats = useMemo(() => {
+    const total = greenhouses.length;
+    const aiActive = greenhouses.filter((g) => g.aiMode).length;
+    const sensorsOnline = greenhouses.reduce(
+      (acc, g) => acc + g.sensors.filter((s) => s.value !== null).length, 0
+    );
+    const criticalCount = greenhouses.reduce(
+      (acc, g) => acc + g.sensors.filter((s) => s.status === "critical").length, 0
+    );
+    return { total, aiActive, sensorsOnline, criticalCount };
+  }, [greenhouses]);
 
   const handleAddGreenhouse = async () => {
     if (!newGreenhouseName.trim()) {
@@ -66,6 +78,55 @@ const DashboardPage: React.FC = () => {
               {t("dashboard.addGreenhouse")}
             </Button>
           </div>
+
+          {greenhouses.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+              <Card variant="default" className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center">
+                    <Leaf className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-display font-bold">{stats.total}</p>
+                    <p className="text-xs text-muted-foreground">Issiqxonalar</p>
+                  </div>
+                </div>
+              </Card>
+              <Card variant="default" className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-neon-green/15 flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-neon-green" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-display font-bold">{stats.sensorsOnline}</p>
+                    <p className="text-xs text-muted-foreground">Faol sensorlar</p>
+                  </div>
+                </div>
+              </Card>
+              <Card variant="default" className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-display font-bold">{stats.aiActive}</p>
+                    <p className="text-xs text-muted-foreground">AI rejimda</p>
+                  </div>
+                </div>
+              </Card>
+              <Card variant="default" className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${stats.criticalCount > 0 ? "bg-neon-coral/15" : "bg-muted"}`}>
+                    <Thermometer className={`w-5 h-5 ${stats.criticalCount > 0 ? "text-neon-coral" : "text-muted-foreground"}`} />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-display font-bold">{stats.criticalCount}</p>
+                    <p className="text-xs text-muted-foreground">Ogohlantirishlar</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
 
           {loading && (
             <div className="mb-6 rounded-lg border border-primary/20 bg-card/40 p-6 text-sm text-muted-foreground">
