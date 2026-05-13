@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Bot, CheckCircle2, History, LoaderCircle, Plus, Send, Sparkles, User } from "lucide-react";
+import { Bot, CheckCircle2, History, LoaderCircle, Plus, Send, Sparkles, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -100,6 +100,14 @@ const AiChatPage: React.FC = () => {
     setShowSessions(false);
   };
 
+  const deleteSession = async (sid: number) => {
+    try {
+      await apiFetch(`/ai/sessions/${sid}`, { method: "DELETE" });
+      setSessions((prev) => prev.filter((s) => s.id !== sid));
+      if (sessionId === sid) startNewChat();
+    } catch { /* ignore */ }
+  };
+
   useEffect(() => {
     void loadSessions();
   }, [loadSessions]);
@@ -182,6 +190,7 @@ const AiChatPage: React.FC = () => {
         { role: "assistant", content: response.reply },
       ]);
       schedulePostChatRefresh();
+      void loadSessions();
     } catch (error) {
       const detail =
         error instanceof Error ? error.message : t("assistant.error");
@@ -274,22 +283,29 @@ const AiChatPage: React.FC = () => {
                 <ScrollArea className="max-h-48">
                   <div className="space-y-1">
                     {sessions.map((session) => (
-                      <button
-                        key={session.id}
-                        onClick={() => void loadSession(session.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                          sessionId === session.id
-                            ? "bg-primary/15 text-primary"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        }`}
-                      >
-                        <span className="block truncate font-medium">
-                          {session.title || "Chat"}
-                        </span>
-                        <span className="text-xs opacity-60">
-                          {new Date(session.updated_at).toLocaleDateString()}
-                        </span>
-                      </button>
+                      <div key={session.id} className="flex items-center gap-1">
+                        <button
+                          onClick={() => void loadSession(session.id)}
+                          className={`flex-1 text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                            sessionId === session.id
+                              ? "bg-primary/15 text-primary"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          }`}
+                        >
+                          <span className="block truncate font-medium">
+                            {session.title || "Chat"}
+                          </span>
+                          <span className="text-xs opacity-60">
+                            {new Date(session.updated_at).toLocaleDateString()}
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => void deleteSession(session.id)}
+                          className="p-1.5 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </ScrollArea>
