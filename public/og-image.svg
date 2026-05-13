@@ -1,12 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-  <title id="title">AgroAi Smart Greenhouse</title>
-  <desc id="desc">Open graph image for AgroAi intelligent greenhouse automation.</desc>
-  <rect width="1200" height="630" fill="#0f172a"/>
-  <rect x="72" y="72" width="1056" height="486" rx="28" fill="#10251e" stroke="#22c55e" stroke-width="4"/>
-  <path d="M180 430c75-150 180-210 315-180 65 14 124 53 177 117 62-95 144-142 246-142 48 0 93 10 135 30v175H180Z" fill="#14532d"/>
-  <path d="M180 430h873" stroke="#86efac" stroke-width="8" stroke-linecap="round"/>
-  <circle cx="920" cy="185" r="58" fill="#facc15"/>
-  <text x="150" y="190" fill="#ecfdf5" font-family="Arial, sans-serif" font-size="76" font-weight="700">AgroAi</text>
-  <text x="150" y="270" fill="#bbf7d0" font-family="Arial, sans-serif" font-size="36">Intelligent Greenhouse Automation</text>
-  <text x="150" y="335" fill="#d1fae5" font-family="Arial, sans-serif" font-size="28">Real-time monitoring • AI control • IoT sensors</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#022c22"/>
+      <stop offset="100%" stop-color="#064e3b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <path d="M0 157h1200M0 315h1200M0 472h1200M300 0v630M600 0v630M900 0v630" stroke="#10b981" stroke-opacity="0.05" stroke-width="1"/>
+  <!-- Leaf -->
+  <path d="M120 420c30-100 100-160 200-170 40-4 76 2 108 18-4 84-32 148-82 190-54 46-124 52-204 20 44-68 96-112 156-132-80 18-138 54-178 108Z" fill="#34d399" fill-opacity="0.3"/>
+  <!-- Text -->
+  <text x="600" y="280" text-anchor="middle" font-family="system-ui, sans-serif" font-size="96" font-weight="800" fill="#ecfdf5">AgroAI</text>
+  <text x="600" y="360" text-anchor="middle" font-family="system-ui, sans-serif" font-size="36" fill="#6ee7b7">Intelligent Greenhouse Automation</text>
+  <text x="600" y="420" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#a7f3d0" opacity="0.7">Real-time monitoring • AI control • Smart agriculture</text>
+  <!-- Dots -->
+  <circle cx="1050" cy="150" r="60" fill="#fbbf24" fill-opacity="0.2"/>
+  <circle cx="1050" cy="150" r="40" fill="#fbbf24" fill-opacity="0.3"/>
 </svg>
