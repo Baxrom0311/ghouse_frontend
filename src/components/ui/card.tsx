@@ -8,11 +8,11 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-card/60 backdrop-blur-xl border border-primary/20 shadow-[0_0_30px_hsl(var(--primary)/0.1)]",
-        glass: "bg-card/40 backdrop-blur-xl border border-primary/20 shadow-[0_0_30px_hsl(var(--primary)/0.1),inset_0_1px_0_hsl(var(--primary)/0.1)]",
-        glow: "bg-card/60 backdrop-blur-xl border border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.2)] hover:shadow-[0_0_40px_hsl(var(--primary)/0.3)] hover:border-primary/50",
-        sensor: "bg-card/60 backdrop-blur-xl border border-primary/20 hover:border-primary/40",
-        device: "bg-card/60 backdrop-blur-xl border-2 border-primary/30 hover:border-primary/60",
+        default: "card-base border border-primary/20",
+        glass: "card-base border border-primary/20",
+        glow: "card-base border border-primary/30 hover:border-primary/50",
+        sensor: "card-base border border-primary/20 hover:border-primary/40",
+        device: "card-base border-2 border-primary/30 hover:border-primary/60",
       },
     },
     defaultVariants: {

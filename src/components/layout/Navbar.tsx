@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/useAuth";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import ThemeToggle from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 const Navbar: React.FC = () => {
@@ -64,6 +65,7 @@ const Navbar: React.FC = () => {
             })}
 
             <LanguageSwitcher />
+            <ThemeToggle />
 
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
@@ -93,6 +95,7 @@ const Navbar: React.FC = () => {
 
           <div className="flex items-center gap-2 md:hidden">
             <LanguageSwitcher />
+            <ThemeToggle />
             <button
               className="p-2 text-foreground"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

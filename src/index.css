@@ -6,6 +6,59 @@
 
 @layer base {
   :root {
+    --background: 140 20% 97%;
+    --foreground: 220 20% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 140 20% 92%;
+    --secondary-foreground: 220 20% 20%;
+
+    --muted: 140 15% 92%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 160 60% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 140 20% 85%;
+    --input: 140 15% 92%;
+    --ring: 160 84% 39%;
+
+    --radius: 0.75rem;
+
+    /* Custom AgroAi tokens */
+    --neon-cyan: 160 84% 39%;
+    --neon-green: 150 80% 40%;
+    --neon-amber: 45 100% 45%;
+    --neon-coral: 0 80% 55%;
+    --neon-purple: 280 70% 55%;
+    
+    --glow-cyan: 0 0 10px hsl(160 84% 39% / 0.2);
+    --glow-green: 0 0 10px hsl(150 80% 40% / 0.2);
+    --glow-amber: 0 0 10px hsl(45 100% 45% / 0.2);
+    --glow-coral: 0 0 10px hsl(0 80% 55% / 0.2);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 20%;
+    --sidebar-primary: 160 84% 39%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 140 20% 92%;
+    --sidebar-accent-foreground: 220 20% 20%;
+    --sidebar-border: 140 20% 85%;
+    --sidebar-ring: 160 84% 39%;
+  }
+
+  .dark {
     --background: 220 20% 4%;
     --foreground: 180 100% 95%;
 
@@ -34,15 +87,12 @@
     --input: 220 25% 12%;
     --ring: 180 100% 50%;
 
-    --radius: 0.75rem;
-
-    /* Custom AgroAi tokens */
     --neon-cyan: 180 100% 50%;
     --neon-green: 150 100% 50%;
     --neon-amber: 45 100% 55%;
     --neon-coral: 0 90% 60%;
     --neon-purple: 280 100% 65%;
-    
+
     --glow-cyan: 0 0 20px hsl(180 100% 50% / 0.5), 0 0 40px hsl(180 100% 50% / 0.3);
     --glow-green: 0 0 20px hsl(150 100% 50% / 0.5), 0 0 40px hsl(150 100% 50% / 0.3);
     --glow-amber: 0 0 20px hsl(45 100% 55% / 0.5), 0 0 40px hsl(45 100% 55% / 0.3);
@@ -56,28 +106,6 @@
     --sidebar-accent-foreground: 180 100% 90%;
     --sidebar-border: 180 50% 15%;
     --sidebar-ring: 180 100% 50%;
-  }
-
-  .dark {
-    --background: 220 20% 4%;
-    --foreground: 180 100% 95%;
-    --card: 220 25% 8%;
-    --card-foreground: 180 100% 95%;
-    --popover: 220 25% 6%;
-    --popover-foreground: 180 100% 95%;
-    --primary: 180 100% 50%;
-    --primary-foreground: 220 20% 4%;
-    --secondary: 220 30% 15%;
-    --secondary-foreground: 180 100% 90%;
-    --muted: 220 20% 12%;
-    --muted-foreground: 220 15% 55%;
-    --accent: 280 100% 65%;
-    --accent-foreground: 180 100% 95%;
-    --destructive: 0 85% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 180 50% 20%;
-    --input: 220 25% 12%;
-    --ring: 180 100% 50%;
   }
 }
 
@@ -106,6 +134,14 @@
     text-shadow: 0 0 10px hsl(var(--primary) / 0.8), 0 0 20px hsl(var(--primary) / 0.5);
   }
 
+  :root:not(.dark) .glow-text {
+    text-shadow: none;
+  }
+
+  :root:not(.dark) .glow-border {
+    box-shadow: 0 1px 3px hsl(var(--primary) / 0.1);
+  }
+
   .glow-button {
     @apply relative overflow-hidden;
     box-shadow: 0 0 15px hsl(var(--primary) / 0.4), inset 0 0 15px hsl(var(--primary) / 0.1);
@@ -118,6 +154,72 @@
   .glass-card {
     @apply bg-card/60 backdrop-blur-xl border border-primary/20 rounded-xl;
     box-shadow: 0 0 30px hsl(var(--primary) / 0.1), inset 0 1px 0 hsl(var(--primary) / 0.1);
+  }
+
+  :root:not(.dark) .glass-card {
+    @apply bg-card/80 border-primary/10;
+    box-shadow: 0 1px 3px hsl(220 20% 10% / 0.08), 0 1px 2px hsl(220 20% 10% / 0.04);
+  }
+
+  .card-base {
+    @apply bg-card/60 backdrop-blur-xl;
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.1);
+  }
+
+  :root:not(.dark) .card-base {
+    @apply bg-card backdrop-blur-none border-border;
+    box-shadow: 0 1px 3px hsl(220 20% 10% / 0.08), 0 1px 2px hsl(220 20% 10% / 0.04);
+  }
+
+  :root:not(.dark) .card-base:hover {
+    box-shadow: 0 4px 12px hsl(220 20% 10% / 0.1);
+  }
+
+  .btn-glow {
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.4);
+  }
+  .btn-glow:hover {
+    box-shadow: 0 0 25px hsl(var(--primary) / 0.6);
+  }
+  .btn-glow-hero:hover {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.5);
+  }
+  .btn-glow-neon {
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.3);
+  }
+  .btn-glow-neon:hover {
+    box-shadow: 0 0 25px hsl(var(--primary) / 0.5);
+  }
+
+  :root:not(.dark) .btn-glow,
+  :root:not(.dark) .btn-glow-hero,
+  :root:not(.dark) .btn-glow-neon {
+    box-shadow: 0 1px 3px hsl(var(--primary) / 0.2);
+  }
+  :root:not(.dark) .btn-glow:hover,
+  :root:not(.dark) .btn-glow-hero:hover,
+  :root:not(.dark) .btn-glow-neon:hover {
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+  }
+
+  .sensor-value-glow {
+    text-shadow: 0 0 20px currentColor;
+  }
+  .sensor-icon-glow {
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.3);
+  }
+  .sensor-progress-glow {
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  :root:not(.dark) .sensor-value-glow {
+    text-shadow: none;
+  }
+  :root:not(.dark) .sensor-icon-glow {
+    box-shadow: none;
+  }
+  :root:not(.dark) .sensor-progress-glow {
+    box-shadow: none;
   }
 
   .status-good {
@@ -135,6 +237,12 @@
     text-shadow: 0 0 10px hsl(var(--neon-coral) / 0.8);
   }
 
+  :root:not(.dark) .status-good,
+  :root:not(.dark) .status-warning,
+  :root:not(.dark) .status-critical {
+    text-shadow: none;
+  }
+
   .pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
   }
@@ -149,6 +257,13 @@
       linear-gradient(60deg, hsl(var(--accent) / 0.02) 25%, transparent 25.5%, transparent 75%, hsl(var(--accent) / 0.02) 75%, hsl(var(--accent) / 0.02));
     background-size: 80px 140px;
     background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+  }
+
+  :root:not(.dark) .geometric-bg {
+    background-image: 
+      linear-gradient(30deg, hsl(var(--primary) / 0.04) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.04) 87.5%),
+      linear-gradient(150deg, hsl(var(--primary) / 0.04) 12%, transparent 12.5%, transparent 87%, hsl(var(--primary) / 0.04) 87.5%);
+    background-size: 80px 140px;
   }
 }
 

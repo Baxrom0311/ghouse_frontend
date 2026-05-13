@@ -73,10 +73,9 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
         <CardHeader className="pb-2">
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center"
+              className="w-10 h-10 rounded-lg flex items-center justify-center sensor-icon-glow"
               style={{
                 backgroundColor: `hsl(var(--${statusColor}) / 0.2)`,
-                boxShadow: `0 0 15px hsl(var(--${statusColor}) / 0.3)`,
               }}
             >
               <Icon className="w-5 h-5" style={{ color: `hsl(var(--${statusColor}))` }} />
@@ -93,10 +92,9 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
                 key={sensor.value ?? "unknown"}
                 initial={{ opacity: 0.5 }}
                 animate={{ opacity: 1 }}
-                className="font-display text-4xl font-bold"
+                className="font-display text-4xl font-bold sensor-value-glow"
                 style={{
                   color: `hsl(var(--${statusColor}))`,
-                  textShadow: `0 0 20px hsl(var(--${statusColor}) / 0.5)`,
                 }}
               >
                 {sensor.value === null ? "--" : sensor.value.toFixed(1)}
@@ -118,10 +116,9 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
                     width: `${progressWidth}%`,
                   }}
                   transition={{ duration: 0.5 }}
-                  className="h-full rounded-full"
+                  className="h-full rounded-full sensor-progress-glow"
                   style={{
                     backgroundColor: `hsl(var(--${statusColor}))`,
-                    boxShadow: `0 0 10px hsl(var(--${statusColor}) / 0.5)`,
                   }}
                 />
               </div>
