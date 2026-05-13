@@ -36,7 +36,7 @@ export interface BackendGreenhouse {
   name: string;
   ai_mode?: boolean | null;
   mqtt_topic_id?: string | null;
-  stats: Omit<BackendTelemetry, "time">;
+  stats: Omit<BackendTelemetry, "time"> & { last_updated?: string | null };
 }
 
 export interface BackendDevice {

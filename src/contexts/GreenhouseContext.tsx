@@ -59,6 +59,7 @@ export interface Greenhouse {
   sensors: SensorData[];
   devices: DeviceData[];
   settings: GreenhouseSettings;
+  lastUpdated: string | null;
 }
 
 interface BackendGreenhouseSnapshot {
@@ -282,6 +283,7 @@ function mapGreenhouse(
     sensors,
     devices: devicesState,
     settings,
+    lastUpdated: greenhouse.stats.last_updated ?? null,
   };
 }
 

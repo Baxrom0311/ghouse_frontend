@@ -3,8 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Greenhouse } from "@/contexts/GreenhouseContext";
-import { Bot, Hand, Leaf, Settings, ArrowRight, Thermometer, Droplets, Wind } from "lucide-react";
+import { Bot, Clock, Hand, Leaf, Settings, ArrowRight, Thermometer, Droplets, Wind } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
+function timeAgo(isoString: string | null): string | null {
+  if (!isoString) return null;
+  const diff = Date.now() - new Date(isoString).getTime();
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "hozirgina";
+  if (minutes < 60) return `${minutes} daq oldin`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} soat oldin`;
+  const days = Math.floor(hours / 24);
+  return `${days} kun oldin`;
+}
 
 const statusColors = {
   ok: "neon-green",
@@ -124,6 +136,13 @@ const GreenhouseCard: React.FC<GreenhouseCardProps> = ({ greenhouse }) => {
                 : t("greenhouse.manualControl")}
             </span>
           </div>
+
+          {greenhouse.lastUpdated && (
+            <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              {timeAgo(greenhouse.lastUpdated)}
+            </div>
+          )}
 
           <div className="flex gap-2">
             <Button

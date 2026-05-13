@@ -21,6 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useGreenhouse } from "@/contexts/useGreenhouse";
 import { apiFetch } from "@/lib/api";
+import MarkdownText from "@/components/MarkdownText";
 
 type ChatMessage = {
   role: "assistant" | "user";
@@ -350,9 +351,13 @@ const AiChatPage: React.FC = () => {
                               : t("assistant.bot")}
                           </span>
                         </div>
-                        <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">
-                          {message.content}
-                        </p>
+                        <div className="text-sm leading-6 text-foreground">
+                          {message.role === "assistant" ? (
+                            <MarkdownText content={message.content} />
+                          ) : (
+                            <p className="whitespace-pre-wrap">{message.content}</p>
+                          )}
+                        </div>
                         {shouldShowConfirmButton(message, index) && (
                           <div className="mt-3 flex flex-wrap gap-2">
                             <Button
