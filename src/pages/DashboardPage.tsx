@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useGreenhouse } from "@/contexts/useGreenhouse";
 import Navbar from "@/components/layout/Navbar";
 import GreenhouseCard from "@/components/greenhouse/GreenhouseCard";
-import { Plus, Leaf, Activity, Bot, Thermometer, Droplets } from "lucide-react";
+import { Plus, Leaf, Activity, Bot, Thermometer } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import {
