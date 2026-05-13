@@ -41,7 +41,6 @@ const PlantPanel: React.FC<PlantPanelProps> = ({ greenhouseId }) => {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [plantTypes, setPlantTypes] = useState<string[]>([]);
   const [selectedType, setSelectedType] = useState("");
-  const [name, setName] = useState("");
   const [variety, setVariety] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -94,12 +93,11 @@ const PlantPanel: React.FC<PlantPanelProps> = ({ greenhouseId }) => {
         method: "POST",
         body: JSON.stringify({
           type: selectedType,
-          name: name.trim() || selectedTypeLabel,
+          name: selectedTypeLabel,
           variety: variety.trim() || null,
         }),
       });
       setPlants((current) => [...current, plant]);
-      setName("");
       setVariety("");
       toast.success(t("plants.added"));
     } catch (error) {
@@ -134,7 +132,7 @@ const PlantPanel: React.FC<PlantPanelProps> = ({ greenhouseId }) => {
         </div>
       </CardHeader>
       <CardContent className="space-y-5">
-        <div className="grid gap-3 lg:grid-cols-[1.2fr_1fr_1fr_auto]">
+        <div className="grid gap-3 lg:grid-cols-[1.5fr_1fr_auto]">
           <div className="space-y-2">
             <Label>{t("plants.type")}</Label>
             <Select value={selectedType} onValueChange={setSelectedType}>
@@ -149,15 +147,6 @@ const PlantPanel: React.FC<PlantPanelProps> = ({ greenhouseId }) => {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="plant-name">{t("plants.name")}</Label>
-            <Input
-              id="plant-name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder={selectedTypeLabel || t("plants.name")}
-            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="plant-variety">{t("plants.variety")}</Label>
