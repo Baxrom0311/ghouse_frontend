@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Bot, CheckCircle2, LoaderCircle, Send, Sparkles, User } from "lucide-react";
+import { Bot, CheckCircle2, History, LoaderCircle, Plus, Send, Sparkles, User } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -27,6 +27,21 @@ type ChatMessage = {
   content: string;
 };
 
+interface ChatSessionItem {
+  id: number;
+  title: string | null;
+  updated_at: string;
+  scope: string;
+  greenhouse_id: number | null;
+}
+
+interface ChatMessageItem {
+  id: number;
+  role: "user" | "assistant";
+  content: string;
+  created_at: string;
+}
+
 const CONFIRMATION_PROMPT_PATTERN = /(tasdiqlayman|i confirm)/i;
 const POST_CHAT_REFRESH_DELAYS_MS = [700, 1600, 3200];
 
@@ -51,7 +66,43 @@ const AiChatPage: React.FC = () => {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [sessionId, setSessionId] = useState<number | null>(null);
+  const [sessions, setSessions] = useState<ChatSessionItem[]>([]);
+  const [showSessions, setShowSessions] = useState(false);
   const refreshTimeoutsRef = useRef<number[]>([]);
+
+  const loadSessions = useCallback(async () => {
+    try {
+      const params = isScoped ? `?greenhouse_id=${greenhouseId}` : "";
+      const data = await apiFetch<ChatSessionItem[]>(`/ai/sessions${params}`);
+      setSessions(data);
+    } catch { /* ignore */ }
+  }, [isScoped, greenhouseId]);
+
+  const loadSession = useCallback(async (sid: number) => {
+    try {
+      const data = await apiFetch<ChatMessageItem[]>(`/ai/sessions/${sid}/messages`);
+      setMessages(data.map((m) => ({ role: m.role, content: m.content })));
+      setSessionId(sid);
+      setShowSessions(false);
+    } catch {
+      toast.error(t("assistant.error"));
+    }
+  }, [t]);
+
+  const startNewChat = () => {
+    setSessionId(null);
+    setMessages([{
+      role: "assistant",
+      content: isScoped
+        ? t("assistant.scopedWelcome", { name: greenhouse?.name ?? t("assistant.thisGreenhouse") })
+        : t("assistant.welcome"),
+    }]);
+    setShowSessions(false);
+  };
+
+  useEffect(() => {
+    void loadSessions();
+  }, [loadSessions]);
 
   useEffect(() => {
     return () => {
@@ -189,6 +240,20 @@ const AiChatPage: React.FC = () => {
               </div>
             )}
             <div className="flex flex-wrap gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { setShowSessions(!showSessions); if (!showSessions) void loadSessions(); }}
+                className="text-muted-foreground hover:text-primary"
+              >
+                <History className="w-4 h-4 mr-1" />
+                {t("assistant.chatTitle")}
+              </Button>
+              {sessionId && (
+                <Button variant="ghost" size="sm" onClick={startNewChat} className="text-muted-foreground hover:text-primary">
+                  <Plus className="w-4 h-4 mr-1" />
+                </Button>
+              )}
               {suggestions.map((suggestion) => (
                 <Badge
                   key={suggestion}
@@ -202,6 +267,35 @@ const AiChatPage: React.FC = () => {
               ))}
             </div>
           </div>
+
+          {showSessions && sessions.length > 0 && (
+            <Card variant="default" className="border-primary/20">
+              <CardContent className="p-3">
+                <ScrollArea className="max-h-48">
+                  <div className="space-y-1">
+                    {sessions.map((session) => (
+                      <button
+                        key={session.id}
+                        onClick={() => void loadSession(session.id)}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                          sessionId === session.id
+                            ? "bg-primary/15 text-primary"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }`}
+                      >
+                        <span className="block truncate font-medium">
+                          {session.title || "Chat"}
+                        </span>
+                        <span className="text-xs opacity-60">
+                          {new Date(session.updated_at).toLocaleDateString()}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          )}
 
           <Card variant="glass" className="border-primary/30">
             <CardHeader>
