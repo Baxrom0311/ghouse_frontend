@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useGreenhouse } from "@/contexts/useGreenhouse";
 import Navbar from "@/components/layout/Navbar";
 import GreenhouseCard from "@/components/greenhouse/GreenhouseCard";
-import { Plus, Leaf, Activity, Bot, Thermometer } from "lucide-react";
+import { Plus, Leaf, Activity, Bot, Thermometer, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import {
@@ -18,10 +18,17 @@ import {
 } from "@/components/ui/dialog";
 
 const DashboardPage: React.FC = () => {
-  const { greenhouses, addGreenhouse, loading, errorMessage } = useGreenhouse();
+  const { greenhouses, addGreenhouse, loading, errorMessage, refreshGreenhouses } = useGreenhouse();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newGreenhouseName, setNewGreenhouseName] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try { await refreshGreenhouses(); } catch { /* ignore */ }
+    finally { setRefreshing(false); }
+  };
 
   const stats = useMemo(() => {
     const total = greenhouses.length;
@@ -69,14 +76,24 @@ const DashboardPage: React.FC = () => {
                 {t("dashboard.subtitle")}
               </p>
             </div>
-            <Button
-              variant="neon"
-              className="mt-4 md:mt-0"
-              onClick={() => setIsDialogOpen(true)}
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              {t("dashboard.addGreenhouse")}
-            </Button>
+            <div className="flex gap-2 mt-4 md:mt-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="text-muted-foreground hover:text-primary"
+              >
+                <RefreshCw className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`} />
+              </Button>
+              <Button
+                variant="neon"
+                onClick={() => setIsDialogOpen(true)}
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                {t("dashboard.addGreenhouse")}
+              </Button>
+            </div>
           </div>
 
           {greenhouses.length > 0 && (

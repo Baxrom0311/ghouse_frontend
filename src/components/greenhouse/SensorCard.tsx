@@ -88,19 +88,26 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor, greenhouseId }) => {
           <div className="space-y-4">
             {/* Value Display */}
             <div className="text-center py-4">
-              <motion.span
-                key={sensor.value ?? "unknown"}
-                initial={{ opacity: 0.5 }}
-                animate={{ opacity: 1 }}
-                className="font-display text-4xl font-bold sensor-value-glow"
-                style={{
-                  color: `hsl(var(--${statusColor}))`,
-                }}
-              >
-                {sensor.value === null ? "--" : sensor.value.toFixed(1)}
-              </motion.span>
-              {sensor.value !== null && (
-                <span className="text-muted-foreground ml-1 text-lg">{sensor.unit}</span>
+              {sensor.value === null ? (
+                <div className="space-y-1">
+                  <span className="font-display text-3xl font-bold text-muted-foreground">—</span>
+                  <p className="text-xs text-muted-foreground">Ma'lumot kutilmoqda</p>
+                </div>
+              ) : (
+                <>
+                  <motion.span
+                    key={sensor.value}
+                    initial={{ opacity: 0.5 }}
+                    animate={{ opacity: 1 }}
+                    className="font-display text-4xl font-bold sensor-value-glow"
+                    style={{
+                      color: `hsl(var(--${statusColor}))`,
+                    }}
+                  >
+                    {sensor.value.toFixed(1)}
+                  </motion.span>
+                  <span className="text-muted-foreground ml-1 text-lg">{sensor.unit}</span>
+                </>
               )}
             </div>
 
