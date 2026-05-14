@@ -180,29 +180,31 @@ const PlantPanel: React.FC<PlantPanelProps> = ({ greenhouseId }) => {
               {t("plants.empty")}
             </div>
           ) : (
-            <div className="divide-y divide-primary/10">
+            <div className="divide-y divide-border">
               {plants.map((plant) => (
                 <div
                   key={plant.id}
-                  className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex items-center gap-3 p-4"
                 >
-                  <div className="min-w-0">
-                    <p className="font-medium">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                    <Leaf className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-sm truncate">
                       {plant.name || plantLabel(plant.type)}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {plantLabel(plant.type)}
-                      {plant.variety ? ` / ${plant.variety}` : ""}
+                      {plant.variety ? ` • ${plant.variety}` : ""}
                     </p>
                   </div>
                   <Button
                     variant="ghost"
-                    size="sm"
-                    className="w-fit text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    size="icon"
+                    className="shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     onClick={() => void deletePlant(plant.id)}
                   >
                     <Trash2 className="h-4 w-4" />
-                    {t("common.delete")}
                   </Button>
                 </div>
               ))}
