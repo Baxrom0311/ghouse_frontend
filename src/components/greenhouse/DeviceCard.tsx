@@ -70,24 +70,21 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
 
         <CardHeader className="pb-2">
           <div className="flex items-center gap-3">
-            <div
-              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+            <motion.div
+              animate={isActive ? { scale: [1, 1.05, 1] } : {}}
+              transition={{ duration: 2, repeat: Infinity }}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 ${
                 isActive
-                  ? "bg-primary/20 border border-primary/40"
-                  : "bg-muted border border-muted"
+                  ? "bg-primary/15 border border-primary/40"
+                  : "bg-muted border border-border"
               }`}
-              style={
-                isActive
-                  ? { boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }
-                  : undefined
-              }
             >
               <Icon
-                className={`w-6 h-6 transition-colors ${
+                className={`w-6 h-6 transition-colors duration-500 ${
                   isActive ? "text-primary" : "text-muted-foreground"
                 }`}
               />
-            </div>
+            </motion.div>
             <div>
               <CardTitle className="text-base">{deviceName}</CardTitle>
               <span className="text-xs text-muted-foreground">
@@ -115,7 +112,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({
 
           {/* Status Badge */}
           <div
-            className={`text-center py-2 rounded-lg text-sm font-medium ${
+            className={`text-center py-2 rounded-lg text-sm font-medium transition-all duration-500 ${
               isActive
                 ? "bg-neon-green/10 text-neon-green border border-neon-green/30"
                 : isUnknown

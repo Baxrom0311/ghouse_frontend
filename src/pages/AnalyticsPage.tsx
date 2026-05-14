@@ -159,6 +159,15 @@ const AnalyticsPage: React.FC = () => {
             <CardHeader><CardTitle className="flex items-center gap-2"><Calendar className="w-5 h-5 text-primary" />{sensorName} {t("analytics.overTime")}</CardTitle></CardHeader>
             <CardContent>
               <div className="h-[400px]">
+                {chartData.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
+                      <Calendar className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <p className="font-display text-lg font-semibold text-muted-foreground">Ma'lumot yo'q</p>
+                    <p className="text-sm text-muted-foreground mt-1">Tanlangan vaqt oralig'ida telemetriya topilmadi</p>
+                  </div>
+                ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartData}>
                     <defs><linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={sensorColor} stopOpacity={0.3} /><stop offset="95%" stopColor={sensorColor} stopOpacity={0} /></linearGradient></defs>
@@ -169,6 +178,7 @@ const AnalyticsPage: React.FC = () => {
                     <Area type="monotone" dataKey="value" stroke={sensorColor} strokeWidth={2} fill="url(#colorValue)" />
                   </AreaChart>
                 </ResponsiveContainer>
+                )}
               </div>
             </CardContent>
           </Card>
