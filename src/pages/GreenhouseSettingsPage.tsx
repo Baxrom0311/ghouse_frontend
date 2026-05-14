@@ -209,26 +209,43 @@ const GreenhouseSettingsPage: React.FC = () => {
               <CardHeader><CardTitle>{t("settings.sensorThresholds")}</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {thresholdGroups.map((group) => (
-                    <div key={group.title} className="p-4 rounded-lg bg-muted/30 border border-primary/10">
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `hsl(var(--${group.color}) / 0.2)` }}>
+                  {thresholdGroups.map((group) => {
+                    const min = settings[group.minKey];
+                    const max = settings[group.maxKey];
+                    const rangeValid = max > min;
+                    return (
+                    <div key={group.title} className="p-4 rounded-lg bg-muted/30 border border-border">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `hsl(var(--${group.color}) / 0.15)` }}>
                           <group.icon className="w-4 h-4" style={{ color: `hsl(var(--${group.color}))` }} />
                         </div>
-                        <span className="font-medium">{group.title}</span>
+                        <span className="font-medium text-sm">{group.title}</span>
+                      </div>
+                      {/* Visual range bar */}
+                      <div className="mb-3 h-2 rounded-full bg-muted overflow-hidden relative">
+                        <div
+                          className="absolute h-full rounded-full transition-all duration-300"
+                          style={{
+                            left: `${rangeValid ? (min / (group.unit === "ppm" ? 2000 : 100)) * 100 : 0}%`,
+                            right: `${rangeValid ? 100 - (max / (group.unit === "ppm" ? 2000 : 100)) * 100 : 100}%`,
+                            backgroundColor: `hsl(var(--${group.color}))`,
+                            opacity: rangeValid ? 0.7 : 0.2,
+                          }}
+                        />
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
                           <Label className="text-xs text-muted-foreground">{t("sensors.min")} ({group.unit})</Label>
-                          <Input type="number" value={settings[group.minKey]} onChange={(e) => setSettings({ ...settings, [group.minKey]: Number(e.target.value) })} />
+                          <Input type="number" value={min} onChange={(e) => setSettings({ ...settings, [group.minKey]: Number(e.target.value) })} />
                         </div>
                         <div className="space-y-1">
                           <Label className="text-xs text-muted-foreground">{t("sensors.max")} ({group.unit})</Label>
-                          <Input type="number" value={settings[group.maxKey]} onChange={(e) => setSettings({ ...settings, [group.maxKey]: Number(e.target.value) })} />
+                          <Input type="number" value={max} onChange={(e) => setSettings({ ...settings, [group.maxKey]: Number(e.target.value) })} />
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
