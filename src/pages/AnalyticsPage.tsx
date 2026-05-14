@@ -24,7 +24,7 @@ const AnalyticsPage: React.FC = () => {
   const [selectedSensorId, setSelectedSensorId] = useState(
     searchParams.get("sensor") || "temperature",
   );
-  const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d">("24h");
+  const [timeRange, setTimeRange] = useState<"6h" | "12h" | "24h" | "7d" | "30d">("24h");
   const [history, setHistory] = useState<BackendTelemetry[]>([]);
 
   const greenhouse = greenhouses.find((g) => g.id === id);
@@ -44,7 +44,7 @@ const AnalyticsPage: React.FC = () => {
     if (!id) return;
 
     const abortController = new AbortController();
-    const hours = timeRange === "24h" ? 24 : timeRange === "7d" ? 24 * 7 : 24 * 30;
+    const hours = timeRange === "6h" ? 6 : timeRange === "12h" ? 12 : timeRange === "24h" ? 24 : timeRange === "7d" ? 24 * 7 : 24 * 30;
     void apiFetch<BackendTelemetry[]>(
       `/greenhouses/${id}/telemetry?hours=${hours}&limit=500`,
       { signal: abortController.signal },
@@ -138,7 +138,7 @@ const AnalyticsPage: React.FC = () => {
                 <SelectContent>{greenhouse.sensors.map((sensor) => <SelectItem key={sensor.id} value={sensor.id}>{t(sensorNameKeys[sensor.type])}</SelectItem>)}</SelectContent>
               </Select>
               <div className="flex rounded-lg border border-primary/30 overflow-hidden">
-                {(["24h", "7d", "30d"] as const).map((range) => <button key={range} onClick={() => setTimeRange(range)} className={`px-4 py-2 text-sm font-medium transition-colors ${timeRange === range ? "bg-primary text-primary-foreground" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>{range}</button>)}
+                {(["6h", "12h", "24h", "7d", "30d"] as const).map((range) => <button key={range} onClick={() => setTimeRange(range)} className={`px-4 py-2 text-sm font-medium transition-colors ${timeRange === range ? "bg-primary text-primary-foreground" : "bg-transparent text-muted-foreground hover:text-foreground"}`}>{range}</button>)}
               </div>
             </div>
             <div className="text-sm text-muted-foreground">{sensorName}</div>

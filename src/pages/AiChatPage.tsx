@@ -70,6 +70,7 @@ const AiChatPage: React.FC = () => {
   const [sessions, setSessions] = useState<ChatSessionItem[]>([]);
   const [showSessions, setShowSessions] = useState(false);
   const refreshTimeoutsRef = useRef<number[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const loadSessions = useCallback(async () => {
     try {
@@ -112,6 +113,10 @@ const AiChatPage: React.FC = () => {
   useEffect(() => {
     void loadSessions();
   }, [loadSessions]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, sending]);
 
   useEffect(() => {
     return () => {
@@ -386,6 +391,7 @@ const AiChatPage: React.FC = () => {
                       </div>
                     </div>
                   )}
+                  <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
 
