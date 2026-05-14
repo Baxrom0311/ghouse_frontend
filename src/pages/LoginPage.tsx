@@ -36,23 +36,45 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background geometric-bg flex items-center justify-center p-4">
-      {/* Language Switcher */}
-      <div className="fixed top-4 right-4 z-50">
-        <LanguageSwitcher />
+    <div className="min-h-screen bg-background flex">
+      {/* Left branding panel - desktop only */}
+      <div className="hidden lg:flex lg:w-1/2 bg-primary/5 dark:bg-primary/10 relative overflow-hidden items-center justify-center">
+        <div className="absolute inset-0 geometric-bg" />
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.3, 0.2] }}
+          transition={{ duration: 8, repeat: Infinity }}
+          className="absolute top-1/4 -left-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl"
+        />
+        <div className="relative z-10 text-center px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="w-20 h-20 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center mx-auto">
+              <Leaf className="w-10 h-10 text-primary" />
+            </div>
+            <h2 className="font-display text-3xl font-bold text-foreground">AgroAi</h2>
+            <p className="text-muted-foreground text-lg max-w-sm mx-auto">
+              Aqlli issiqxona avtomatlashtirish tizimi. Real-time monitoring va AI boshqaruv.
+            </p>
+            <div className="flex justify-center gap-3 pt-4">
+              {["IoT", "AI", "MQTT", "Real-time"].map((tag) => (
+                <span key={tag} className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-xs font-medium text-primary">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Gradient Orbs */}
-      <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 8, repeat: Infinity }}
-        className="fixed top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none"
-      />
-      <motion.div
-        animate={{ scale: [1.2, 1, 1.2], opacity: [0.15, 0.3, 0.15] }}
-        transition={{ duration: 10, repeat: Infinity }}
-        className="fixed bottom-1/4 -right-32 w-96 h-96 bg-accent/20 rounded-full blur-3xl pointer-events-none"
-      />
+      {/* Right form panel */}
+      <div className="flex-1 flex items-center justify-center p-4 relative">
+        {/* Language Switcher */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSwitcher />
+        </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -160,6 +182,7 @@ const LoginPage: React.FC = () => {
           </CardContent>
         </Card>
       </motion.div>
+      </div>
     </div>
   );
 };

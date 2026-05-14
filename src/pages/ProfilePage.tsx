@@ -7,8 +7,18 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/useAuth";
 import { toast } from "sonner";
 import Navbar from "@/components/layout/Navbar";
-import { User, Mail, Lock, Save, Check } from "lucide-react";
+import { User, Mail, Lock, Save, Check, Crown, Leaf } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { apiFetch } from "@/lib/api";
+
+interface TenantOverview {
+  tenant: { name: string };
+  plan: { name: string; max_greenhouses: number; max_ai_messages_per_day: number };
+  subscription: { status: string };
+  greenhouse_count: number;
+  ai_messages_used: number;
+  role: string;
+}
 
 const ProfilePage: React.FC = () => {
   const { user, updateProfile, changePassword } = useAuth();
@@ -21,6 +31,11 @@ const ProfilePage: React.FC = () => {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [tenant, setTenant] = useState<TenantOverview | null>(null);
+
+  useEffect(() => {
+    void apiFetch<TenantOverview>("/tenants/current").then(setTenant).catch(() => {});
+  }, []);
 
   useEffect(() => {
     setFirstName(user?.firstName || "");
@@ -212,6 +227,45 @@ const ProfilePage: React.FC = () => {
                 </form>
               </CardContent>
             </Card>
+
+            {/* Subscription Info */}
+            {tenant && (
+              <Card variant="glass">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Crown className="w-5 h-5 text-primary" />
+                    Obuna
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-3 rounded-lg bg-muted/50">
+                      <p className="text-xs text-muted-foreground">Reja</p>
+                      <p className="font-display font-bold text-primary">{tenant.plan.name}</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-muted/50">
+                      <p className="text-xs text-muted-foreground">Rol</p>
+                      <p className="font-display font-bold text-foreground capitalize">{tenant.role}</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-muted/50">
+                      <div className="flex items-center gap-1">
+                        <Leaf className="w-3 h-3 text-primary" />
+                        <p className="text-xs text-muted-foreground">Issiqxonalar</p>
+                      </div>
+                      <p className="font-display font-bold text-foreground">
+                        {tenant.greenhouse_count} / {tenant.plan.max_greenhouses}
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-muted/50">
+                      <p className="text-xs text-muted-foreground">AI xabarlar (bugun)</p>
+                      <p className="font-display font-bold text-foreground">
+                        {tenant.ai_messages_used} / {tenant.plan.max_ai_messages_per_day}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </motion.div>
       </main>
