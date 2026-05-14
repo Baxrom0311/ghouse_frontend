@@ -8,7 +8,8 @@ import { useTranslation } from "react-i18next";
 
 function timeAgo(isoString: string | null): string | null {
   if (!isoString) return null;
-  const diff = Date.now() - new Date(isoString).getTime();
+  const dateStr = isoString.endsWith("Z") ? isoString : isoString + "Z";
+  const diff = Date.now() - new Date(dateStr).getTime();
   const minutes = Math.floor(diff / 60000);
   if (minutes < 1) return "hozirgina";
   if (minutes < 60) return `${minutes} daq oldin`;
