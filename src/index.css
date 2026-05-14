@@ -6,42 +6,42 @@
 
 @layer base {
   :root {
-    --background: 140 20% 97%;
-    --foreground: 220 20% 10%;
+    --background: 140 10% 98%;
+    --foreground: 220 25% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card-foreground: 220 25% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover-foreground: 220 25% 12%;
 
-    --primary: 160 84% 39%;
+    --primary: 160 84% 36%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 140 20% 92%;
-    --secondary-foreground: 220 20% 20%;
+    --secondary: 140 15% 93%;
+    --secondary-foreground: 220 20% 18%;
 
-    --muted: 140 15% 92%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 140 10% 93%;
+    --muted-foreground: 220 15% 40%;
 
-    --accent: 160 60% 45%;
+    --accent: 160 60% 40%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 85% 60%;
+    --destructive: 0 85% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 140 20% 85%;
-    --input: 140 15% 92%;
-    --ring: 160 84% 39%;
+    --border: 140 15% 88%;
+    --input: 140 10% 93%;
+    --ring: 160 84% 36%;
 
     --radius: 0.75rem;
 
     /* Custom AgroAi tokens */
-    --neon-cyan: 160 84% 39%;
-    --neon-green: 150 80% 40%;
-    --neon-amber: 45 100% 45%;
-    --neon-coral: 0 80% 55%;
-    --neon-purple: 280 70% 55%;
+    --neon-cyan: 160 84% 36%;
+    --neon-green: 150 70% 35%;
+    --neon-amber: 40 90% 42%;
+    --neon-coral: 0 75% 50%;
+    --neon-purple: 280 60% 50%;
     
     --glow-cyan: 0 0 10px hsl(160 84% 39% / 0.2);
     --glow-green: 0 0 10px hsl(150 80% 40% / 0.2);
