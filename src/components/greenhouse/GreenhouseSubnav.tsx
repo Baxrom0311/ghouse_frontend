@@ -76,9 +76,17 @@ const GreenhouseSubnav: React.FC<GreenhouseSubnavProps> = ({
             </Button>
           </Link>
           <div className="min-w-0">
-            <h1 className="truncate font-display text-2xl font-bold md:text-3xl">
-              {greenhouseName}
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="truncate font-display text-2xl font-bold md:text-3xl">
+                {greenhouseName}
+              </h1>
+              {(() => {
+                const gh = greenhouses.find((g) => g.id === greenhouseId);
+                if (!gh) return null;
+                const colors = { ok: "bg-neon-green", warning: "bg-neon-amber", critical: "bg-neon-coral", unknown: "bg-muted-foreground" };
+                return <span className={`w-2.5 h-2.5 rounded-full ${colors[gh.status]} shrink-0`} />;
+              })()}
+            </div>
             {subtitle && (
               <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
             )}
