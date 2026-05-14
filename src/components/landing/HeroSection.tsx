@@ -20,7 +20,7 @@ const HeroSection: React.FC = () => {
           opacity: [0.3, 0.5, 0.3],
         }}
         transition={{ duration: 8, repeat: Infinity }}
-        className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/30 rounded-full blur-3xl"
+        className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/30 dark:bg-primary/30 bg-primary/10 rounded-full blur-3xl"
       />
       <motion.div
         animate={{
@@ -28,7 +28,7 @@ const HeroSection: React.FC = () => {
           opacity: [0.2, 0.4, 0.2],
         }}
         transition={{ duration: 10, repeat: Infinity }}
-        className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/30 rounded-full blur-3xl"
+        className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/30 dark:bg-accent/30 bg-accent/10 rounded-full blur-3xl"
       />
 
       {/* Grid Lines */}
