@@ -90,32 +90,26 @@ const GreenhouseCard: React.FC<GreenhouseCardProps> = ({ greenhouse }) => {
 
         <CardContent className="space-y-4">
           <div className="grid grid-cols-3 gap-2">
-            <div className="text-center p-2 rounded-lg bg-muted/50">
-              <Thermometer className="w-4 h-4 mx-auto mb-1 text-primary" />
-              <span className="text-lg font-display font-bold text-foreground">
-                {tempSensor?.value === null || tempSensor?.value === undefined
-                  ? "--"
-                  : `${tempSensor.value.toFixed(0)}°`}
-              </span>
-            </div>
-            <div className="text-center p-2 rounded-lg bg-muted/50">
-              <Wind className="w-4 h-4 mx-auto mb-1 text-primary" />
-              <span className="text-lg font-display font-bold text-foreground">
-                {humiditySensor?.value === null ||
-                humiditySensor?.value === undefined
-                  ? "--"
-                  : `${humiditySensor.value.toFixed(0)}%`}
-              </span>
-            </div>
-            <div className="text-center p-2 rounded-lg bg-muted/50">
-              <Droplets className="w-4 h-4 mx-auto mb-1 text-primary" />
-              <span className="text-lg font-display font-bold text-foreground">
-                {moistureSensor?.value === null ||
-                moistureSensor?.value === undefined
-                  ? "--"
-                  : `${moistureSensor.value.toFixed(0)}%`}
-              </span>
-            </div>
+            {[
+              { sensor: tempSensor, icon: Thermometer, suffix: "°", color: "#ff6b6b" },
+              { sensor: humiditySensor, icon: Wind, suffix: "%", color: "#00f0ff" },
+              { sensor: moistureSensor, icon: Droplets, suffix: "%", color: "#00ff88" },
+            ].map(({ sensor, icon: Icon, suffix, color }) => {
+              const pct = sensor?.value != null && sensor.max > sensor.min
+                ? Math.min(100, Math.max(0, ((sensor.value - sensor.min) / (sensor.max - sensor.min)) * 100))
+                : 0;
+              return (
+                <div key={sensor?.id ?? Math.random()} className="text-center p-2 rounded-lg bg-muted/50">
+                  <Icon className="w-4 h-4 mx-auto mb-1 text-primary" />
+                  <span className="text-lg font-display font-bold text-foreground">
+                    {sensor?.value == null ? "--" : `${sensor.value.toFixed(0)}${suffix}`}
+                  </span>
+                  <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, backgroundColor: color }} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           <div
