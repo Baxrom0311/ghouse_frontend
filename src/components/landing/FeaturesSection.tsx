@@ -62,22 +62,20 @@ const FeaturesSection: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card variant="glow" className="h-full group hover:scale-[1.02] transition-transform">
+              <Card variant="glow" className="h-full group hover:scale-[1.02] transition-transform border-border">
                 <CardContent className="p-6">
-                  <motion.div
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.5 }}
+                  <div
                     className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 border"
                     style={{
-                      backgroundColor: `hsl(var(--${feature.color}) / 0.2)`,
-                      borderColor: `hsl(var(--${feature.color}) / 0.4)`,
+                      backgroundColor: `hsl(var(--${feature.color}) / 0.12)`,
+                      borderColor: `hsl(var(--${feature.color}) / 0.3)`,
                     }}
                   >
                     <feature.icon
                       className="w-7 h-7"
                       style={{ color: `hsl(var(--${feature.color}))` }}
                     />
-                  </motion.div>
+                  </div>
                   <h3 className="font-display text-lg font-semibold mb-2 text-foreground">
                     {t(feature.titleKey)}
                   </h3>
