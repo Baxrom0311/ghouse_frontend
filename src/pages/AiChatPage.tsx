@@ -319,44 +319,54 @@ const AiChatPage: React.FC = () => {
             </Card>
           )}
 
-          <Card variant="glass" className="border-primary/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-primary" />
-                {t("assistant.chatTitle")}
-              </CardTitle>
-              <CardDescription>{t("assistant.chatDescription")}</CardDescription>
+          <Card variant="glass" className="border-primary/20 overflow-hidden">
+            <CardHeader className="pb-0 pt-4 px-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center">
+                    <Bot className="w-4 h-4 text-primary" />
+                  </div>
+                  {t("assistant.chatTitle")}
+                </CardTitle>
+                <span className="text-xs text-muted-foreground">{t("assistant.chatDescription")}</span>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <ScrollArea className="h-[55vh] rounded-xl border border-primary/20 bg-background/40 p-4">
-                <div className="space-y-4">
+            <CardContent className="space-y-0">
+              <ScrollArea className="h-[60vh] px-4 py-4">
+                <div className="space-y-5">
                   {messages.map((message, index) => (
                     <div
                       key={`${message.role}-${index}`}
-                      className={`flex ${
-                        message.role === "user" ? "justify-end" : "justify-start"
+                      className={`flex gap-3 ${
+                        message.role === "user" ? "flex-row-reverse" : "flex-row"
                       }`}
                     >
+                      {/* Avatar */}
                       <div
-                        className={`max-w-[85%] rounded-2xl border px-4 py-3 ${
+                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                           message.role === "user"
-                            ? "border-primary/40 bg-primary/10 text-foreground"
-                            : "border-primary/20 bg-card/80 text-muted-foreground"
+                            ? "bg-primary/20 border border-primary/40"
+                            : "bg-card border border-primary/30"
                         }`}
                       >
-                        <div className="mb-2 flex items-center gap-2 text-xs uppercase tracking-widest">
-                          {message.role === "user" ? (
-                            <User className="w-3 h-3 text-primary" />
-                          ) : (
-                            <Bot className="w-3 h-3 text-primary" />
-                          )}
-                          <span className="text-primary">
-                            {message.role === "user"
-                              ? t("assistant.you")
-                              : t("assistant.bot")}
-                          </span>
-                        </div>
-                        <div className="text-sm leading-6 text-foreground">
+                        {message.role === "user" ? (
+                          <User className="w-4 h-4 text-primary" />
+                        ) : (
+                          <Bot className="w-4 h-4 text-primary" />
+                        )}
+                      </div>
+
+                      {/* Message bubble */}
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                          message.role === "user"
+                            ? "bg-primary text-primary-foreground rounded-tr-sm"
+                            : "bg-muted/50 border border-border rounded-tl-sm"
+                        }`}
+                      >
+                        <div className={`text-sm leading-relaxed ${
+                          message.role === "user" ? "text-primary-foreground" : "text-foreground"
+                        }`}>
                           {message.role === "assistant" ? (
                             <MarkdownText content={message.content} />
                           ) : (
@@ -364,10 +374,11 @@ const AiChatPage: React.FC = () => {
                           )}
                         </div>
                         {shouldShowConfirmButton(message, index) && (
-                          <div className="mt-3 flex flex-wrap gap-2">
+                          <div className="mt-3">
                             <Button
                               size="sm"
-                              variant="neon"
+                              variant="outline"
+                              className="border-primary/50 text-primary hover:bg-primary/10"
                               onClick={() =>
                                 void sendMessage(t("assistant.confirmCommandMessage"))
                               }
@@ -382,11 +393,15 @@ const AiChatPage: React.FC = () => {
                     </div>
                   ))}
                   {sending && (
-                    <div className="flex justify-start">
-                      <div className="rounded-2xl border border-primary/20 bg-card/80 px-4 py-3 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <LoaderCircle className="w-4 h-4 animate-spin text-primary" />
-                          {t("assistant.thinking")}
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-card border border-primary/30">
+                        <Bot className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="rounded-2xl rounded-tl-sm bg-muted/50 border border-border px-4 py-3">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0ms" }} />
+                          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "150ms" }} />
+                          <span className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "300ms" }} />
                         </div>
                       </div>
                     </div>
@@ -395,29 +410,26 @@ const AiChatPage: React.FC = () => {
                 </div>
               </ScrollArea>
 
-              <Separator className="bg-primary/20" />
+              <Separator className="bg-border" />
 
-              <div className="space-y-3">
-                <Textarea
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                  placeholder={t("assistant.placeholder")}
-                  className="min-h-[120px] border-primary/30 bg-background/60"
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
-                      void sendMessage();
-                    }
-                  }}
-                />
-                <div className="flex items-center justify-between gap-4">
-                  <p className="text-xs text-muted-foreground">
-                    {isScoped
-                      ? t("assistant.scopedFooter")
-                      : t("assistant.footer")}
-                  </p>
+              <div className="p-4">
+                <div className="relative">
+                  <Textarea
+                    value={input}
+                    onChange={(event) => setInput(event.target.value)}
+                    placeholder={t("assistant.placeholder")}
+                    className="min-h-[80px] max-h-[160px] resize-none pr-14 border-border bg-muted/30"
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" && !event.shiftKey) {
+                        event.preventDefault();
+                        void sendMessage();
+                      }
+                    }}
+                  />
                   <Button
-                    variant="neon"
+                    size="icon"
+                    variant="default"
+                    className="absolute right-2 bottom-2 h-9 w-9 rounded-lg"
                     onClick={() => void sendMessage()}
                     disabled={sending || !input.trim()}
                   >
@@ -426,9 +438,11 @@ const AiChatPage: React.FC = () => {
                     ) : (
                       <Send className="w-4 h-4" />
                     )}
-                    {t("assistant.send")}
                   </Button>
                 </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {isScoped ? t("assistant.scopedFooter") : t("assistant.footer")}
+                </p>
               </div>
             </CardContent>
           </Card>
